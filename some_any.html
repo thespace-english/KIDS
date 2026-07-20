@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер some, any, a</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        :root {
+            --bg-color: #E8F8F5; /* Мятный светлый фон */
+            --circle-color: rgba(163, 228, 215, 0.5); /* Цвет кругов */
+            --text-color: #000000; /* Предложения строго черные */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Декоративные круги --- */
+        .circle-big { 
+            position: absolute; 
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: var(--circle-color);
+            top: -100px; 
+            right: -100px; 
+            z-index: 1;
+        } 
+        .circle-small-1 { 
+            position: absolute; 
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--circle-color);
+            top: 80px; 
+            right: 300px; 
+            z-index: 1;
+        } 
+        .circle-small-2 { 
+            position: absolute; 
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--circle-color);
+            top: 250px; 
+            right: 180px; 
+            z-index: 1;
+        }
+
+        /* --- Интерфейс тренажера --- */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 4px solid #FFF;
+            text-align: center;
+        }
+
+        /* Название тренажера */
+        .app-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00796B;
+            margin-bottom: 5px;
+        }
+
+        /* Счетчик вопросов */
+        .question-counter {
+            font-size: 24px;
+            font-weight: 900;
+            color: #FF4081;
+            margin-bottom: 20px;
+            background: #FFF;
+            display: inline-block;
+            padding: 2px 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.05);
+        }
+
+        /* Таймер-полоса сверху */
+        .timer-container {
+            width: 100%;
+            height: 16px;
+            background: #E0F2F1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 2px solid #B2DFDB;
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #FF3D00, #FFEA00, #00E676);
+            background-size: 300% 100%;
+            transform-origin: left center;
+            transition: transform 0.1s linear;
+        }
+
+        /* Шпаргалка с правилами */
+        .cheat-sheet {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .badge {
+            font-size: 24px;
+            font-weight: 900;
+            padding: 8px 25px;
+            border-radius: 20px;
+            color: #FFF;
+            text-shadow: 1px 2px 0px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 0px rgba(0,0,0,0.1);
+        }
+        .badge-a { background: #FF4081; transform: rotate(-2deg); }
+        .badge-some { background: #00E676; transform: rotate(3deg); }
+        .badge-any { background: #29B6F6; transform: rotate(-1deg); }
+
+        /* Контент с вопросами */
+        .quiz-box {
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dialogue-line {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 10px 0;
+            text-align: left;
+            width: 100%;
+        }
+
+        /* Пропуски */
+        .blank {
+            display: inline-block;
+            min-width: 110px;
+            border-bottom: 5px dashed #B0BEC5;
+            margin: 0 10px;
+            text-align: center;
+            height: 45px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .blank.revealed {
+            border-bottom: none;
+            font-size: 46px; /* Огромные яркие буквы */
+            font-weight: 900;
+            animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 2px 3px 0px rgba(0,0,0,0.15);
+        }
+
+        /* Разноцветные праздничные классы для букв ответов */
+        .color-1 { color: #FF1744; } 
+        .color-2 { color: #FF9100; } 
+        .color-3 { color: #AA00FF; } 
+        .color-4 { color: #00B0FF; } 
+
+        /* Кнопки управления */
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            font-family: 'Nunito', sans-serif;
+            font-size: 22px;
+            font-weight: 900;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            color: #FFF;
+            box-shadow: 0 8px 0px rgba(0,0,0,0.15);
+            transition: all 0.1s ease;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px rgba(0,0,0,0.15);
+        }
+
+        .btn-answer { background: #FF9100; }
+        .btn-next { background: #651FFF; }
+
+        .btn:disabled {
+            background: #B0BEC5 !important;
+            box-shadow: 0 8px 0px #78909C !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Финальный экран */
+        .end-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.5s ease forwards;
+        }
+
+        .elf-container svg {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 20px;
+        }
+
+        .star-text {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1.3;
+            text-shadow: 3px 4px 0px rgba(0,0,0,0.1);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0.3); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Круги на фоне -->
+    <div class="circle-big"></div>
+    <div class="circle-small-1"></div>
+    <div class="circle-small-2"></div>
+
+    <!-- Основной контейнер игры -->
+    <div class="app-container" id="game-container">
+        <!-- Шапка: Название тренажера и динамический счетчик -->
+        <div class="app-title">Тренажер some, any, a</div>
+        <div class="question-counter" id="counter">1/16</div>
+
+        <!-- Таймер-полоса -->
+        <div class="timer-container">
+            <div class="timer-bar" id="timer"></div>
+        </div>
+
+        <!-- Постоянная шпаргалка -->
+        <div class="cheat-sheet">
+            <span class="badge badge-a">a (an)</span>
+            <span class="badge badge-some">some</span>
+            <span class="badge badge-any">any</span>
+        </div>
+
+        <!-- Блок вопросов/ответов -->
+        <div class="quiz-box" id="quiz-box"></div>
+
+        <!-- Кнопки управления -->
+        <div class="controls">
+            <button class="btn btn-answer" id="btn-answer" onclick="revealAnswer()">Answer</button>
+            <button class="btn btn-next" id="btn-next" onclick="nextQuestion()" disabled>Next</button>
+        </div>
+    </div>
+
+    <!-- Финальный контейнер -->
+    <div class="app-container end-screen" id="end-container">
+        <div class="elf-container">
+            <svg viewBox="0 0 200 200">
+                <circle cx="100" cy="110" r="45" fill="#FFA726"/>
+                <circle cx="75" cy="90" r="15" fill="#FFA726"/>
+                <circle cx="125" cy="90" r="15" fill="#FFA726"/>
+                <circle cx="85" cy="105" r="8" fill="#FFF"/>
+                <circle cx="85" cy="105" r="4" fill="#000"/>
+                <circle cx="115" cy="105" r="8" fill="#FFF"/>
+                <circle cx="115" cy="105" r="4" fill="#000"/>
+                <path d="M 90 125 Q 100 135 110 125" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <circle cx="100" cy="114" r="6" fill="#E65100"/>
+                <path d="M 50 80 Q 70 50 100 60 Q 130 50 150 80 Q 160 110 150 130 Q 50 130 50 80" fill="#D84315" opacity="0.8"/>
+                <circle cx="50" cy="120" r="10" fill="#FFA726"/>
+                <g transform="translate(10, 80) rotate(-10)">
+                    <rect x="0" y="0" width="50" height="30" fill="#00247D"/>
+                    <line x1="0" y1="0" x2="50" y2="30" stroke="#FFF" stroke-width="4"/>
+                    <line x1="0" y1="30" x2="50" y2="0" stroke="#FFF" stroke-width="4"/>
+                    <line x1="0" y1="0" x2="50" y2="30" stroke="#CF142B" stroke-width="1.5"/>
+                    <line x1="0" y1="30" x2="50" y2="0" stroke="#CF142B" stroke-width="1.5"/>
+                    <line x1="25" y1="0" x2="25" y2="30" stroke="#FFF" stroke-width="8"/>
+                    <line x1="0" y1="15" x2="50" y2="15" stroke="#FFF" stroke-width="8"/>
+                    <line x1="25" y1="0" x2="25" y2="30" stroke="#CF142B" stroke-width="4"/>
+                    <line x1="0" y1="15" x2="50" y2="15" stroke="#CF142B" stroke-width="4"/>
+                    <line x1="0" y1="0" x2="0" y2="60" stroke="#5D4037" stroke-width="3"/>
+                </g>
+            </svg>
+        </div>
+        <div class="star-text">
+            <span class="color-1">Y</span><span class="color-2">o</span><span class="color-3">u</span><span class="color-4">'</span><span class="color-1">r</span><span class="color-2">e</span> 
+            <span class="color-3">t</span><span class="color-4">h</span><span class="color-1">e</span> 
+            <span class="color-2">s</span><span class="color-3">t</span><span class="color-4">a</span><span class="color-1">r</span><span class="color-2">!</span><br>
+            <span class="color-3">S</span><span class="color-4">u</span><span class="color-1">p</span><span class="color-2">e</span><span class="color-3">r</span> 
+            <span class="color-4">s</span><span class="color-1">t</span><span class="color-2">a</span><span class="color-3">r</span><span class="color-4">!</span>
+        </div>
+    </div>
+
+    <script>
+        const dataset = [
+            { q: "Have you got ___ pen?", a: "a", q_word: "pen", res: "Yes, I've got ___ pen in my pencil case.", res_a: "a", res_word: "pen" },
+            { q: "Has he got ___ bananas?", a: "any", q_word: "bananas", res: "Yes, he's got ___ bananas on the table.", res_a: "some", res_word: "bananas" },
+            { q: "Have they got ___ lemonade?", a: "any", q_word: "lemonade", res: "Yes, they've got ___ lemonade in the fridge.", res_a: "some", res_word: "lemonade" },
+            { q: "Has she got ___ apples?", a: "any", q_word: "apples", res: "Yes, she's got ___ apples in her school bag.", res_a: "some", res_word: "apples" },
+            { q: "Have you got ___ cats?", a: "any", q_word: "cats", res: "Yes, I've got ___ cat in the garden.", res_a: "a", res_word: "cat" },
+            { q: "Has he got ___ bike?", a: "a", q_word: "bike", res: "Yes, he's got ___ bike at home.", res_a: "a", res_word: "bike" },
+            { q: "Have they got ___ geography book?", a: "a", q_word: "geography book", res: "Yes, they've got ___ geography book at school.", res_a: "a", res_word: "geography book" },
+            { q: "Has she got ___ ruler?", a: "a", q_word: "ruler", res: "No, she hasn't got ___ rulers on her desk.", res_a: "any", res_word: "rulers" },
+            { q: "Have you got ___ doll under the table?", a: "a", q_word: "doll", res: "No, I haven't got ___ doll under the table.", res_a: "a", res_word: "doll" },
+            { q: "Has he got ___ carrots?", a: "any", q_word: "carrots", res: "Yes, he's got ___ carrots in the garden.", res_a: "some", res_word: "carrots" },
+            { q: "Have they got ___ milk?", a: "any", q_word: "milk", res: "Yes, they've got ___ milk in the fridge.", res_a: "some", res_word: "milk" },
+            { q: "Has she got ___ rubber?", a: "a", q_word: "rubber", res: "Yes, she's got ___ rubber in her school bag.", res_a: "a", res_word: "rubber" },
+            { q: "Have you got ___ toy trains?", a: "any", q_word: "toy trains", res: "Yes, I've got ___ toy trains in the box.", res_a: "some", res_word: "toy trains" },
+            { q: "Has he got ___ tomatoes?", a: "any", q_word: "tomatoes", res: "No, he hasn't got ___ tomatoes in the salad.", res_a: "any", res_word: "tomatoes" },
+            { q: "Have they got ___ pencil?", a: "a", q_word: "pencil", res: "Yes, they've got ___ pencil in the pencil case.", res_a: "a", res_word: "pencil" },
+            { q: "Has she got ___ juice?", a: "any", q_word: "juice", res: "No, she hasn't got ___ juice.", res_a: "any", res_word: "juice" }
+        ];
+
+        let currentIdx = 0;
+        let timerInterval = null;
+        let timeLeft = 30;
+        const totalTime = 30;
+        let isRevealed = false;
+
+        const quizBox = document.getElementById('quiz-box');
+        const timerBar = document.getElementById('timer');
+        const btnAnswer = document.getElementById('btn-answer');
+        const btnNext = document.getElementById('btn-next');
+        const counterEl = document.getElementById('counter');
+
+        renderCurrentQuestion();
+
+        function renderCurrentQuestion() {
+            isRevealed = false;
+            btnAnswer.disabled = false;
+            btnNext.disabled = true;
+            
+            // Обновляем счетчик на экране
+            counterEl.innerText = `${currentIdx + 1}/${dataset.length}`;
+            
+            const data = dataset[currentIdx];
+            let qHtml = data.q.replace("___", `<span class="blank" id="blank-q"></span>`);
+            let resHtml = data.res.replace("___", `<span class="blank" id="blank-res"></span>`);
+
+            quizBox.innerHTML = `
+                <div class="dialogue-line">${qHtml}</div>
+                <div class="dialogue-line">${resHtml}</div>
+            `;
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = totalTime;
+            timerBar.style.transform = 'scaleX(1)';
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerBar.style.transform = 'scaleX(0)';
+                    revealAnswer();
+                } else {
+                    timerBar.style.transform = `scaleX(${timeLeft / totalTime})`;
+                }
+            }, 100);
+        }
+
+        function revealAnswer() {
+            if (isRevealed) return;
+            isRevealed = true;
+            clearInterval(timerInterval);
+            
+            const data = dataset[currentIdx];
+            const blankQ = document.getElementById('blank-q');
+            const blankRes = document.getElementById('blank-res');
+
+            const randomColorClass1 = `color-${Math.floor(Math.random() * 4) + 1}`;
+            const randomColorClass2 = `color-${Math.floor(Math.random() * 4) + 1}`;
+
+            let finalQAnswer = data.a;
+            let finalResAnswer = data.res_a;
+
+            if (finalQAnswer === 'a' && startsWithVowel(data.q_word)) finalQAnswer = 'an';
+            if (finalResAnswer === 'a' && startsWithVowel(data.res_word)) finalResAnswer = 'an';
+
+            blankQ.innerText = finalQAnswer;
+            blankQ.classList.add('revealed', randomColorClass1);
+
+            blankRes.innerText = finalResAnswer;
+            blankRes.classList.add('revealed', randomColorClass2);
+
+            btnAnswer.disabled = true;
+            btnNext.disabled = false;
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < dataset.length) {
+                renderCurrentQuestion();
+            } else {
+                document.getElementById('game-container').style.display = 'none';
+                document.getElementById('end-container').style.display = 'flex';
+            }
+        }
+
+        function startsWithVowel(word) {
+            return ['a', 'e', 'i', 'o', 'u'].includes(word.trim().toLowerCase()[0]);
+        }
+    </script>
+</body>
+</html>
