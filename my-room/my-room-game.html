@@ -50,6 +50,18 @@ button {
   margin-bottom: 14px;
 }
 
+  .game-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.game-brand img {
+  width: 90px;
+  height: auto;
+  object-fit: contain;
+}
+
 h1 {
   margin: 0;
   font-size: 30px;
@@ -677,7 +689,10 @@ h1 {
 
   <div class="topbar">
 
-    <h1>My Room Game</h1>
+   <div class="game-brand">
+  <img src="logo.png" alt="The Space">
+  <h1>My Room</h1>
+</div>
 
     <div class="badge">
       BOOM −2 · WOW +2
@@ -731,7 +746,7 @@ h1 {
       class="status"
       id="status"
     >
-      Press START!
+      Нажми START
     </div>
 
   </div>
@@ -752,7 +767,7 @@ h1 {
   >
 
     <div class="intro-title">
-      Look at the examples
+      Посмотри на примеры
     </div>
 
     <div class="example">
@@ -932,7 +947,7 @@ h1 {
     </div>
 
     <div class="tip">
-      Tap a word to add it. Tap ↶ to remove the last word.
+      Нажимай на слова по порядку. ↶ — отменить последнее слово.
     </div>
 
   </div>
@@ -1690,7 +1705,7 @@ rollBtn.addEventListener(
     */
 
     statusEl.textContent =
-      `You rolled ${number}`;
+      "Бросай кубик!";
 
 
     await sleep(1200);
@@ -2134,7 +2149,7 @@ check1.addEventListener(
     if (!correct) {
 
       feedback1.textContent =
-        "Check the words again.";
+        "Попробуй ещё раз";
 
       feedback1.className =
         "feedback bad";
@@ -2335,7 +2350,7 @@ function checkPronoun(
 
 
   feedback2.textContent =
-    "Try again.";
+    "Попробуй ещё раз";
 
   feedback2.className =
     "feedback bad";
