@@ -98,12 +98,18 @@ button.primary{
 }
 button:disabled{opacity:.45;cursor:not-allowed}
 .die{
-  width:62px;height:62px;
+  width:72px;height:72px;
   display:grid;place-items:center;
   font-size:34px;font-weight:900;
   border-radius:18px;
   background:#fff;
   box-shadow:0 8px 18px #315f5422;
+}
+.die.rolling{animation:diceSpin .28s linear infinite}
+@keyframes diceSpin{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.16)}
+  100%{transform:rotate(360deg) scale(1)}
 }
 .status{
   min-height:28px;
@@ -234,20 +240,38 @@ button:disabled{opacity:.45;cursor:not-allowed}
     </div>
 
     <div class="controls">
-      <div class="die" id="die">⚄</div>
-      <button class="primary" id="rollBtn">ROLL DICE</button>
+      <div class="die" id="die">🎲</div>
+      <button class="primary" id="rollBtn">START</button>
       <button id="resetBtn">RESET</button>
     </div>
-    <div class="status" id="status">Start!</div>
+    <div class="status" id="status">Press START!</div>
+  </div>
+</div>
+
+
+<div class="modal show" id="introModal">
+  <div class="game-card" style="max-width:760px">
+    <div class="task-title">Look at the examples</div>
+    <div class="example">
+      <div>That is <span class="highlight">Tom's</span> armchair.</div>
+      <div>That is <span class="highlight">his</span> armchair.</div>
+    </div>
+    <div class="example">
+      <div>This is <span class="highlight">Anna's</span> doll.</div>
+      <div>This is <span class="highlight">her</span> doll.</div>
+    </div>
+    <div class="example">
+      <div>That is <span class="highlight">Tom and Anna's</span> rocking horse.</div>
+      <div>That is <span class="highlight">their</span> rocking horse.</div>
+    </div>
+    <div class="controls">
+      <button class="primary" id="playBtn">PLAY</button>
+    </div>
   </div>
 </div>
 
 <div class="modal" id="taskModal">
   <div class="game-card">
-    <div class="example" id="exampleBox">
-      <div>That is <span class="highlight">Tom's</span> armchair.</div>
-      <div>That is <span class="highlight">his</span> armchair.</div>
-    </div>
 
     <div class="scene near" id="scene">
       <img class="avatar" id="avatarImg" alt="">
@@ -259,6 +283,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="answer-zone" id="answer1"></div>
     <div class="word-bank" id="bank1"></div>
     <div class="controls">
+      <button id="clear1">UNDO ALL</button>
       <button class="primary" id="check1">CHECK</button>
     </div>
     <div class="feedback" id="feedback1"></div>
@@ -268,6 +293,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
       <div class="answer-zone" id="answer2"></div>
       <div class="word-bank" id="bank2"></div>
       <div class="controls">
+        <button id="clear2">UNDO ALL</button>
         <button class="primary" id="check2">CHECK</button>
       </div>
       <div class="feedback" id="feedback2"></div>
@@ -276,7 +302,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <div class="controls" style="margin-top:18px">
       <button id="backBtn" disabled>BACK TO BOARD</button>
     </div>
-    <div class="small-note">Drag the words into the answer box.</div>
+    <div class="small-note">Tap a word to add it. Tap it again to remove it.</div>
   </div>
 </div>
 
@@ -362,7 +388,6 @@ const modal = document.getElementById('taskModal');
 const scene = document.getElementById('scene');
 const avatarImg = document.getElementById('avatarImg');
 const objectImg = document.getElementById('objectImg');
-const exampleBox = document.getElementById('exampleBox');
 const answer1 = document.getElementById('answer1');
 const answer2 = document.getElementById('answer2');
 const bank1 = document.getElementById('bank1');
@@ -384,6 +409,16 @@ placeToken();
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 function rollDie(){return Math.floor(Math.random()*6)+1}
 
+async function animateDie(finalNumber){
+  const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  die.classList.add('rolling');
+  for(let i=0;i<12;i++){
+    die.textContent=faces[Math.floor(Math.random()*6)];
+    await sleep(70);
+  }
+  die.textContent=faces[finalNumber-1];
+  die.classList.remove('rolling');
+}
 async function moveBy(n){
   const dir = Math.sign(n);
   for(let i=0;i<Math.abs(n);i++){
@@ -424,11 +459,13 @@ async function resolveCell(){
 
 rollBtn.addEventListener('click', async ()=>{
   if(busy) return;
+  rollBtn.textContent='ROLL DICE';
   busy=true; rollBtn.disabled=true;
   const n=rollDie();
-  die.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][n-1];
+  statusEl.textContent = 'Rolling...';
+  await animateDie(n);
   statusEl.textContent = `You rolled ${n}.`;
-  await sleep(350);
+  await sleep(300);
   await moveBy(n);
   await resolveCell();
   if(!modal.classList.contains('show') && pos !== cells.length-1){
@@ -437,7 +474,7 @@ rollBtn.addEventListener('click', async ()=>{
 });
 
 resetBtn.addEventListener('click', ()=>{
-  pos=0; busy=false; rollBtn.disabled=false; statusEl.textContent='Start!'; placeToken();
+  pos=0; busy=false; rollBtn.disabled=false; statusEl.textContent='Press START!'; rollBtn.textContent='START'; die.textContent='🎲'; placeToken();
 });
 
 function ownerPossessive(names){
@@ -475,7 +512,10 @@ function makeWordBank(container, answerZone, words){
       el.classList.add('used');
       setTimeout(()=>el.remove(),0);
     });
-    el.addEventListener('click', ()=>answerZone.appendChild(el));
+    el.addEventListener('click', ()=>{
+      if(el.parentElement === container) answerZone.appendChild(el);
+      else container.appendChild(el);
+    });
     container.appendChild(el);
   });
 }
@@ -549,11 +589,6 @@ function openTask(cell){
   objectImg.src=ASSET(cell.file);
   scene.className='scene '+(near?'near':'far');
 
-  const exName = person.names.length===1 ? poss : ownerPossessive(person.names);
-  exampleBox.innerHTML = `
-    <div>${demonstrative} is <span class="highlight">${exName}</span> ${noun}.</div>
-    <div>${demonstrative} is <span class="highlight">${pron}</span> ${noun}.</div>`;
-
   const bankWords1 = [
     'This','That','is',poss,ownerText(person.names),noun,pluralTrap(noun),possessiveTrap(noun)
   ];
@@ -570,6 +605,17 @@ function openTask(cell){
   backBtn.disabled=true;
   modal.classList.add('show');
 }
+
+
+document.getElementById('playBtn').addEventListener('click',()=>{
+  document.getElementById('introModal').classList.remove('show');
+});
+
+function returnAll(zone, bank){
+  [...zone.children].forEach(el=>bank.appendChild(el));
+}
+document.getElementById('clear1').addEventListener('click',()=>returnAll(answer1,bank1));
+document.getElementById('clear2').addEventListener('click',()=>returnAll(answer2,bank2));
 
 check1.addEventListener('click',()=>{
   const ok = normalize(answerText(answer1))===normalize(current.a1);
@@ -589,7 +635,7 @@ backBtn.addEventListener('click',()=>{
   modal.classList.remove('show');
   busy=false;
   if(pos !== cells.length-1) rollBtn.disabled=false;
-  statusEl.textContent='Roll again!';
+  statusEl.textContent='Your turn!';
 });
 </script>
 </body>
