@@ -1,1 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>My Room Game</title>
+<style>
+:root{
+  --mint:#dff8f1;
+  --mint2:#eefcf8;
+  --ink:#27463f;
+  --accent:#5a8f83;
+  --card:#ffffffee;
+  --good:#2f9d71;
+  --bad:#c84d4d;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Nunito,Arial,sans-serif;
+  background:linear-gradient(135deg,var(--mint),var(--mint2));
+  color:var(--ink);
+  min-height:100vh;
+}
+.wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:20px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-bottom:16px;
+}
+h1{margin:0;font-size:32px}
+.badge{
+  background:#fff;
+  border-radius:18px;
+  padding:10px 14px;
+  box-shadow:0 8px 24px #24443b18;
+  font-weight:700;
+}
+.panel{
+  background:var(--card);
+  border-radius:28px;
+  padding:18px;
+  box-shadow:0 20px 45px #315f5420;
+}
+.board-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:1536/1024;
+  overflow:hidden;
+  border-radius:24px;
+  background:#cfeee7;
+}
+.board{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.token{
+  position:absolute;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#ff3b20;
+  border:4px solid #fff;
+  box-shadow:0 5px 14px #0005;
+  transform:translate(-50%,-50%);
+  transition:left .35s ease, top .35s ease;
+  z-index:5;
+}
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+button{
+  border:none;
+  border-radius:16px;
+  padding:12px 20px;
+  font:700 18px Nunito,Arial,sans-serif;
+  cursor:pointer;
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 8px 18px #315f5422;
+}
+button.primary{
+  background:#6ea99a;
+  color:#fff;
+}
+button:disabled{opacity:.45;cursor:not-allowed}
+.die{
+  width:62px;height:62px;
+  display:grid;place-items:center;
+  font-size:34px;font-weight:900;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 18px #315f5422;
+}
+.status{
+  min-height:28px;
+  text-align:center;
+  font-weight:800;
+  margin-top:10px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:#173f365c;
+  padding:20px;
+  z-index:20;
+}
+.modal.show{display:flex}
+.game-card{
+  width:min(980px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#f9fffd;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 25px 70px #0004;
+}
+.scene{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:26px;
+  min-height:250px;
+  transition:gap .7s ease;
+}
+.scene.far{gap:260px}
+.scene.near{gap:28px}
+.avatar, .object{
+  width:220px;
+  height:220px;
+  object-fit:contain;
+}
+.avatar{
+  max-height:240px;
+}
+.example{
+  background:#fff;
+  border-radius:20px;
+  padding:16px 18px;
+  margin:8px 0 18px;
+  box-shadow:0 8px 20px #315f5415;
+  font-size:21px;
+  line-height:1.55;
+}
+.highlight{
+  background:#fff2a8;
+  border-radius:8px;
+  padding:0 5px;
+}
+.task-title{
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+  margin:6px 0 14px;
+}
+.answer-zone{
+  min-height:62px;
+  border:2px dashed #86b8ab;
+  border-radius:18px;
+  background:#fff;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+}
+.word-bank{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin:12px 0;
+}
+.word{
+  padding:10px 14px;
+  border-radius:14px;
+  background:#e9f7f3;
+  border:2px solid #b6ddd3;
+  font-weight:800;
+  cursor:grab;
+  user-select:none;
+}
+.word.used{opacity:.35}
+.feedback{
+  min-height:30px;
+  text-align:center;
+  font-size:19px;
+  font-weight:800;
+}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--bad)}
+.step2{display:none}
+.step2.show{display:block}
+.small-note{
+  text-align:center;
+  font-size:15px;
+  opacity:.75;
+}
+@media (max-width:760px){
+  .scene.far{gap:90px}
+  .avatar,.object{width:145px;height:145px}
+  h1{font-size:25px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>My Room Game</h1>
+    <div class="badge">BOOM −2 · WOW +2</div>
+  </div>
 
+  <div class="panel">
+    <div class="board-wrap" id="boardWrap">
+      <img class="board" id="boardImg" src="board.png" alt="Game board">
+      <div class="token" id="token"></div>
+    </div>
+
+    <div class="controls">
+      <div class="die" id="die">⚄</div>
+      <button class="primary" id="rollBtn">ROLL DICE</button>
+      <button id="resetBtn">RESET</button>
+    </div>
+    <div class="status" id="status">Start!</div>
+  </div>
+</div>
+
+<div class="modal" id="taskModal">
+  <div class="game-card">
+    <div class="example" id="exampleBox">
+      <div>That is <span class="highlight">Tom's</span> armchair.</div>
+      <div>That is <span class="highlight">his</span> armchair.</div>
+    </div>
+
+    <div class="scene near" id="scene">
+      <img class="avatar" id="avatarImg" alt="">
+      <img class="object" id="objectImg" alt="">
+    </div>
+
+    <div class="task-title">Build the sentence</div>
+
+    <div class="answer-zone" id="answer1"></div>
+    <div class="word-bank" id="bank1"></div>
+    <div class="controls">
+      <button class="primary" id="check1">CHECK</button>
+    </div>
+    <div class="feedback" id="feedback1"></div>
+
+    <div class="step2" id="step2">
+      <div class="task-title">One more sentence</div>
+      <div class="answer-zone" id="answer2"></div>
+      <div class="word-bank" id="bank2"></div>
+      <div class="controls">
+        <button class="primary" id="check2">CHECK</button>
+      </div>
+      <div class="feedback" id="feedback2"></div>
+    </div>
+
+    <div class="controls" style="margin-top:18px">
+      <button id="backBtn" disabled>BACK TO BOARD</button>
+    </div>
+    <div class="small-note">Drag the words into the answer box.</div>
+  </div>
+</div>
+
+<script>
+const ASSET = name => `assets/${name}`;
+const AVATAR = name => `avatars/${name}`;
+
+const cells = [
+  {type:'start', x:13.2, y:70.8},
+  {type:'boom', x:8.8, y:49.4},
+  {type:'musical_box', x:10.0, y:31.0, file:'musical_box.png'},
+  {type:'lamp', x:20.4, y:18.2, file:'lamp.png'},
+  {type:'elephant', x:32.0, y:17.0, file:'elephant.png'},
+  {type:'wow', x:41.4, y:24.8},
+  {type:'doll', x:41.2, y:39.3, file:'doll.png'},
+  {type:'computer', x:34.1, y:52.4, file:'computer.png'},
+  {type:'chair', x:34.0, y:69.0, file:'chair.png'},
+  {type:'boom', x:43.6, y:74.2},
+  {type:'ball', x:57.0, y:70.1, file:'ball.png'},
+  {type:'tv', x:68.4, y:73.2, file:'tv.png'},
+  {type:'bed', x:79.7, y:68.0, file:'bed.png'},
+  {type:'train', x:81.4, y:54.4, file:'train.png'},
+  {type:'aeroplane', x:73.1, y:43.4, file:'aeroplane.png'},
+  {type:'teddy_bear', x:65.5, y:46.2, file:'teddy_bear.png'},
+  {type:'radio', x:57.4, y:46.3, file:'radio.png'},
+  {type:'tea_set', x:53.7, y:34.1, file:'tea_set.png'},
+  {type:'rocking_horse', x:60.5, y:20.4, file:'rocking_horse.png'},
+  {type:'wow', x:72.3, y:20.4},
+  {type:'musical_box', x:82.4, y:23.4, file:'musical_box.png'},
+  {type:'armchair', x:88.1, y:34.6, file:'armchair.png'},
+  {type:'rocking_horse', x:91.7, y:50.1, file:'rocking_horse.png'},
+  {type:'finish', x:92.1, y:68.2}
+];
+
+// Use single-owner and two-owner rounds.
+const people = [
+  {names:['Kiril'], files:['kiril.png'], pronoun:'his'},
+  {names:['Max'], files:['max.png'], pronoun:'his'},
+  {names:['Leo'], files:['leo.png'], pronoun:'his'},
+  {names:['Egor'], files:['egor.png'], pronoun:'his'},
+  {names:['Nikita'], files:['nikita.png'], pronoun:'his'},
+  {names:['Timofey'], files:['timofey.png'], pronoun:'his'},
+  {names:['Yana'], files:['yana.png'], pronoun:'her'},
+  {names:['Marina'], files:['marina.png'], pronoun:'her'},
+  {names:['Daria'], files:['daria.png'], pronoun:'her'},
+  {names:['Sofia'], files:['sofia.png'], pronoun:'her'},
+  {names:['Alisa'], files:['alisa.png'], pronoun:'her'},
+  {names:['Polina'], files:['polina.png'], pronoun:'her'},
+  {names:['Max','Yana'], files:['max.png','yana.png'], pronoun:'their'},
+  {names:['Leo','Daria'], files:['leo.png','daria.png'], pronoun:'their'},
+  {names:['Nikita','Sofia'], files:['nikita.png','sofia.png'], pronoun:'their'}
+];
+
+const objectWords = {
+  musical_box:'musical box',
+  lamp:'lamp',
+  elephant:'elephant',
+  doll:'doll',
+  computer:'computer',
+  chair:'chair',
+  ball:'ball',
+  tv:'TV',
+  bed:'bed',
+  train:'train',
+  aeroplane:'aeroplane',
+  teddy_bear:'teddy bear',
+  radio:'radio',
+  tea_set:'tea set',
+  rocking_horse:'rocking horse',
+  armchair:'armchair'
+};
+
+let pos = 0;
+let busy = false;
+let current = null;
+
+const token = document.getElementById('token');
+const rollBtn = document.getElementById('rollBtn');
+const resetBtn = document.getElementById('resetBtn');
+const die = document.getElementById('die');
+const statusEl = document.getElementById('status');
+const modal = document.getElementById('taskModal');
+const scene = document.getElementById('scene');
+const avatarImg = document.getElementById('avatarImg');
+const objectImg = document.getElementById('objectImg');
+const exampleBox = document.getElementById('exampleBox');
+const answer1 = document.getElementById('answer1');
+const answer2 = document.getElementById('answer2');
+const bank1 = document.getElementById('bank1');
+const bank2 = document.getElementById('bank2');
+const feedback1 = document.getElementById('feedback1');
+const feedback2 = document.getElementById('feedback2');
+const step2 = document.getElementById('step2');
+const check1 = document.getElementById('check1');
+const check2 = document.getElementById('check2');
+const backBtn = document.getElementById('backBtn');
+
+function placeToken(){
+  const c = cells[pos];
+  token.style.left = c.x + '%';
+  token.style.top = c.y + '%';
+}
+placeToken();
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function rollDie(){return Math.floor(Math.random()*6)+1}
+
+async function moveBy(n){
+  const dir = Math.sign(n);
+  for(let i=0;i<Math.abs(n);i++){
+    pos = Math.max(0, Math.min(cells.length-1, pos + dir));
+    placeToken();
+    await sleep(360);
+    if(pos === cells.length-1) break;
+  }
+}
+
+async function resolveCell(){
+  const c = cells[pos];
+  if(c.type === 'boom'){
+    statusEl.textContent = 'BOOM! Two steps back.';
+    await sleep(600);
+    await moveBy(-2);
+    return resolveCell();
+  }
+  if(c.type === 'wow'){
+    statusEl.textContent = 'WOW! Two steps forward.';
+    await sleep(600);
+    await moveBy(2);
+    return resolveCell();
+  }
+  if(c.type === 'finish'){
+    statusEl.textContent = 'Finish! Great job!';
+    rollBtn.disabled = true;
+    return;
+  }
+  if(c.type !== 'start'){
+    statusEl.textContent = 'Build two sentences!';
+    await sleep(450);
+    openTask(c);
+  } else {
+    busy=false; rollBtn.disabled=false;
+  }
+}
+
+rollBtn.addEventListener('click', async ()=>{
+  if(busy) return;
+  busy=true; rollBtn.disabled=true;
+  const n=rollDie();
+  die.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][n-1];
+  statusEl.textContent = `You rolled ${n}.`;
+  await sleep(350);
+  await moveBy(n);
+  await resolveCell();
+  if(!modal.classList.contains('show') && pos !== cells.length-1){
+    busy=false; rollBtn.disabled=false;
+  }
+});
+
+resetBtn.addEventListener('click', ()=>{
+  pos=0; busy=false; rollBtn.disabled=false; statusEl.textContent='Start!'; placeToken();
+});
+
+function ownerPossessive(names){
+  if(names.length===1) return `${names[0]}'s`;
+  return `${names[0]} and ${names[1]}'s`;
+}
+function ownerText(names){
+  if(names.length===1) return names[0];
+  return `${names[0]} and ${names[1]}`;
+}
+function pluralTrap(noun){
+  if(noun === 'TV') return 'TVs';
+  if(noun.endsWith('y')) return noun.slice(0,-1)+'ies';
+  if(noun.endsWith('s')) return noun+'es';
+  return noun+'s';
+}
+function possessiveTrap(noun){
+  return noun + "'s";
+}
+function shuffle(arr){
+  return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+}
+
+function makeWordBank(container, answerZone, words){
+  container.innerHTML='';
+  answerZone.innerHTML='';
+  shuffle(words).forEach(word=>{
+    const el=document.createElement('div');
+    el.className='word';
+    el.textContent=word;
+    el.draggable=true;
+    el.addEventListener('dragstart', e=>{
+      e.dataTransfer.setData('text/plain', word);
+      e.dataTransfer.setData('source-id', Math.random().toString());
+      el.classList.add('used');
+      setTimeout(()=>el.remove(),0);
+    });
+    el.addEventListener('click', ()=>answerZone.appendChild(el));
+    container.appendChild(el);
+  });
+}
+[answer1,answer2].forEach(zone=>{
+  zone.addEventListener('dragover',e=>e.preventDefault());
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();
+    const word=e.dataTransfer.getData('text/plain');
+    const el=document.createElement('div');
+    el.className='word';
+    el.textContent=word;
+    el.addEventListener('click',()=> {
+      const target = zone===answer1 ? bank1 : bank2;
+      target.appendChild(el);
+    });
+    zone.appendChild(el);
+  });
+});
+function answerText(zone){
+  return [...zone.children].map(x=>x.textContent).join(' ').replace(/\s+([.,!?])/g,'$1').trim();
+}
+function normalize(s){
+  return s.replace(/\s+/g,' ').replace(/\s+'\s*s/g,"'s").trim().toLowerCase();
+}
+
+function renderAvatar(person){
+  if(person.files.length===1){
+    avatarImg.src=AVATAR(person.files[0]);
+    avatarImg.style.display='block';
+    avatarImg.style.width='220px';
+  }else{
+    // build a temporary two-avatar visual using CSS background-like wrapper
+    avatarImg.style.display='none';
+    let old=document.getElementById('pairWrap');
+    if(old) old.remove();
+    const pair=document.createElement('div');
+    pair.id='pairWrap';
+    pair.style.display='flex';
+    pair.style.gap='8px';
+    pair.style.alignItems='center';
+    person.files.forEach(f=>{
+      const im=document.createElement('img');
+      im.src=AVATAR(f);
+      im.className='avatar';
+      im.style.width='160px';
+      pair.appendChild(im);
+    });
+    scene.insertBefore(pair, objectImg);
+  }
+  if(person.files.length===1){
+    const old=document.getElementById('pairWrap');
+    if(old) old.remove();
+  }
+}
+
+function openTask(cell){
+  const person = people[Math.floor(Math.random()*people.length)];
+  const near = Math.random()<0.5;
+  const demonstrative = near ? 'This' : 'That';
+  const noun = objectWords[cell.type];
+  const poss = ownerPossessive(person.names);
+  const pron = person.pronoun;
+
+  current = {
+    demonstrative,noun,poss,pron,person,
+    a1:`${demonstrative} is ${poss} ${noun}.`,
+    a2:`${demonstrative} is ${pron} ${noun}.`
+  };
+
+  renderAvatar(person);
+  objectImg.src=ASSET(cell.file);
+  scene.className='scene '+(near?'near':'far');
+
+  const exName = person.names.length===1 ? poss : ownerPossessive(person.names);
+  exampleBox.innerHTML = `
+    <div>${demonstrative} is <span class="highlight">${exName}</span> ${noun}.</div>
+    <div>${demonstrative} is <span class="highlight">${pron}</span> ${noun}.</div>`;
+
+  const bankWords1 = [
+    'This','That','is',poss,ownerText(person.names),noun,pluralTrap(noun),possessiveTrap(noun)
+  ];
+  makeWordBank(bank1,answer1,bankWords1);
+
+  const bankWords2 = [
+    'This','That','is','his','her','their',noun,pluralTrap(noun)
+  ];
+  makeWordBank(bank2,answer2,bankWords2);
+
+  feedback1.textContent=''; feedback1.className='feedback';
+  feedback2.textContent=''; feedback2.className='feedback';
+  step2.classList.remove('show');
+  backBtn.disabled=true;
+  modal.classList.add('show');
+}
+
+check1.addEventListener('click',()=>{
+  const ok = normalize(answerText(answer1))===normalize(current.a1);
+  feedback1.textContent = ok ? current.a1 : 'Check the words again.';
+  feedback1.className='feedback '+(ok?'good':'bad');
+  if(ok) step2.classList.add('show');
+});
+
+check2.addEventListener('click',()=>{
+  const ok = normalize(answerText(answer2))===normalize(current.a2);
+  feedback2.textContent = ok ? current.a2 : 'Check the words again.';
+  feedback2.className='feedback '+(ok?'good':'bad');
+  if(ok) backBtn.disabled=false;
+});
+
+backBtn.addEventListener('click',()=>{
+  modal.classList.remove('show');
+  busy=false;
+  if(pos !== cells.length-1) rollBtn.disabled=false;
+  statusEl.textContent='Roll again!';
+});
+</script>
+</body>
+</html>
