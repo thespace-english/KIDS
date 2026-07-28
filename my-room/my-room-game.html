@@ -844,43 +844,46 @@ h1 {
 
     <!-- FIRST SENTENCE -->
 
-    <div class="task-title">
-      Build the sentence
-    </div>
+   
+   <!-- FIRST SENTENCE -->
 
-    <div
-      class="answer-zone"
-      id="answer1"
-    ></div>
+<div id="step1">
 
-    <div
-      class="word-bank"
-      id="bank1"
-    ></div>
+  <div
+    class="answer-zone"
+    id="answer1"
+  ></div>
 
-    <div class="action-row">
+  <div
+    class="word-bank"
+    id="bank1"
+  ></div>
 
-      <button
-        class="undo-button"
-        id="undo1"
-        title="Undo"
-      >
-        ↶
-      </button>
+  <div class="action-row">
 
-      <button
-        class="check-button"
-        id="check1"
-      >
-        CHECK
-      </button>
+    <button
+      class="undo-button"
+      id="undo1"
+      title="Undo"
+    >
+      ↶
+    </button>
 
-    </div>
+    <button
+      class="check-button"
+      id="check1"
+    >
+      CHECK
+    </button>
 
-    <div
-      class="feedback"
-      id="feedback1"
-    ></div>
+  </div>
+
+  <div
+    class="feedback"
+    id="feedback1"
+  ></div>
+
+</div>
 
 
     <!-- SECOND SENTENCE -->
@@ -1315,7 +1318,10 @@ const peopleArea =
 
 const objectImg =
   document.getElementById("objectImg");
-
+  
+const step1 =
+  document.getElementById("step1");
+  
 const answer1 =
   document.getElementById("answer1");
 
@@ -2082,6 +2088,7 @@ function openTask(cell) {
   feedback2.className =
     "feedback";
 
+  step1.style.display = "block";
 
   step2.classList.remove(
     "show"
@@ -2137,14 +2144,9 @@ check1.addEventListener(
     }
 
 
-    feedback1.textContent =
-      "✓";
+    step1.style.display = "none";
 
-    feedback1.className =
-      "feedback good";
-
-
-    showSecondStep();
+showSecondStep();
 
   }
 );
