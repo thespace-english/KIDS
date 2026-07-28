@@ -145,8 +145,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
   min-height:250px;
   transition:gap .7s ease;
 }
-.scene.far{gap:260px}
-.scene.near{gap:28px}
+.scene.far{gap:340px}
+.scene.near{gap:0}
 .avatar, .object{
   width:220px;
   height:220px;
@@ -378,6 +378,7 @@ const objectWords = {
 let pos = 0;
 let busy = false;
 let current = null;
+  let taskCount = 0;
 
 const token = document.getElementById('token');
 const rollBtn = document.getElementById('rollBtn');
@@ -424,7 +425,7 @@ async function moveBy(n){
   for(let i=0;i<Math.abs(n);i++){
     pos = Math.max(0, Math.min(cells.length-1, pos + dir));
     placeToken();
-    await sleep(360);
+    await sleep(550);
     if(pos === cells.length-1) break;
   }
 }
@@ -465,8 +466,8 @@ rollBtn.addEventListener('click', async ()=>{
   statusEl.textContent = 'Rolling...';
   await animateDie(n);
   statusEl.textContent = `You rolled ${n}.`;
-  await sleep(300);
-  await moveBy(n);
+await sleep(1200);
+await moveBy(n);
   await resolveCell();
   if(!modal.classList.contains('show') && pos !== cells.length-1){
     busy=false; rollBtn.disabled=false;
@@ -538,7 +539,12 @@ function answerText(zone){
   return [...zone.children].map(x=>x.textContent).join(' ').replace(/\s+([.,!?])/g,'$1').trim();
 }
 function normalize(s){
-  return s.replace(/\s+/g,' ').replace(/\s+'\s*s/g,"'s").trim().toLowerCase();
+  return s
+    .replace(/\s+/g,' ')
+    .replace(/\s+'\s*s/g,"'s")
+    .replace(/[.!?]+$/,'')
+    .trim()
+    .toLowerCase();
 }
 
 function renderAvatar(person){
@@ -573,7 +579,8 @@ function renderAvatar(person){
 
 function openTask(cell){
   const person = people[Math.floor(Math.random()*people.length)];
-  const near = Math.random()<0.5;
+  const near = taskCount % 2 === 0;
+taskCount++;
   const demonstrative = near ? 'This' : 'That';
   const noun = objectWords[cell.type];
   const poss = ownerPossessive(person.names);
