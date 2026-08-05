@@ -1,0 +1,36 @@
+<script>
+const values = [10,20,30,40,50,60,70,80,90,100];
+const colors = ["#ffeb3b","#00e5ff","#ff4dff","#76ff03","#ff5252","#ffffff"];
+
+const number = document.getElementById("number");
+const button = document.getElementById("toggle");
+
+let timer = null;
+
+function nextNumber(){
+    const value = values[Math.floor(Math.random()*values.length)];
+    const color = colors[Math.floor(Math.random()*colors.length)];
+
+    number.textContent = value;
+    number.style.color = color;
+}
+
+function start(){
+    if(timer) return;
+    button.textContent="STOP";
+    nextNumber();
+    timer = setInterval(nextNumber,50);
+}
+
+function stop(){
+    clearInterval(timer);
+    timer=null;
+    button.textContent="START";
+}
+
+button.onclick=()=>{
+    timer ? stop() : start();
+};
+
+start();
+</script>
