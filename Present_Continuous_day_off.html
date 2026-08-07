@@ -1,0 +1,3399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Present Continuous — Day Off | The Space</title>
+
+  <!-- Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- ОБЩАЯ ТЕМА THE SPACE -->
+  <link
+    rel="stylesheet"
+    href="https://thespace-english.github.io/The-Space-Trainer/theme.css"
+  >
+
+  <style>
+
+    :root {
+      --mint: #D7F9F1;
+      --mint2: #EAFBF7;
+      --mint-dark: #7AA095;
+      --text: #173D43;
+      --green: #3E9F83;
+      --red: #E25353;
+      --white: #ffffff;
+
+      --shadow:
+        0 14px 34px
+        rgba(44, 94, 88, 0.12);
+    }
+
+
+    button,
+    .drag-card,
+    .word-chip {
+      font-family: "Nunito", sans-serif;
+    }
+
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+
+    /* ======================================================
+       ОБЩАЯ ОБЛАСТЬ
+    ====================================================== */
+
+    .app {
+      position: relative;
+      z-index: 3;
+
+      width: min(
+        1120px,
+        calc(100% - 30px)
+      );
+
+      margin: 0 auto;
+
+      padding:
+        22px 0
+        115px;
+
+      min-height: 100vh;
+    }
+
+
+    /* ======================================================
+       ВКЛАДКИ
+    ====================================================== */
+
+    .trainer-tabs {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 9px;
+
+      max-width: 950px;
+
+      margin:
+        0 auto 22px;
+
+      padding: 7px;
+
+      background:
+        rgba(255,255,255,.56);
+
+      border:
+        1px solid
+        rgba(255,255,255,.86);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 8px 24px
+        rgba(23,61,67,.08);
+
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+
+    .trainer-tab {
+      min-height: 60px;
+
+      padding:
+        10px 12px;
+
+      border: 0;
+      border-radius: 16px;
+
+      background: transparent;
+      color: var(--text);
+
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.2;
+
+      cursor: pointer;
+
+      transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+    }
+
+
+    .trainer-tab:hover {
+      background:
+        rgba(215,249,241,.58);
+    }
+
+
+    .trainer-tab.active {
+      background: #fff;
+
+      box-shadow:
+        0 6px 16px
+        rgba(23,61,67,.10);
+    }
+
+
+    .tab-number {
+      display: inline-flex;
+
+      width: 28px;
+      height: 28px;
+
+      align-items: center;
+      justify-content: center;
+
+      margin-right: 6px;
+
+      border-radius: 50%;
+
+      background: var(--mint);
+
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+
+    .trainer-tab.active .tab-number {
+      background: var(--text);
+      color: #fff;
+    }
+
+
+    .counter {
+      min-height: 22px;
+
+      margin:
+        -8px 0 10px;
+
+      text-align: center;
+
+      font-size: 15px;
+      font-weight: 900;
+
+      opacity: .62;
+    }
+
+
+    /* ======================================================
+       ЭКРАНЫ
+    ====================================================== */
+
+    .screen {
+      display: none;
+
+      animation:
+        screenAppear
+        .28s ease;
+    }
+
+
+    .screen.active {
+      display: block;
+    }
+
+
+    @keyframes screenAppear {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    h1 {
+      margin:
+        14px 0 9px;
+
+      text-align: center;
+
+      color: var(--text);
+
+      font-size:
+        clamp(
+          30px,
+          5vw,
+          46px
+        );
+
+      line-height: 1.1;
+
+      font-weight: 900;
+    }
+
+
+    .instruction {
+      max-width: 780px;
+
+      margin:
+        0 auto 25px;
+
+      text-align: center;
+
+      font-size:
+        clamp(
+          17px,
+          2vw,
+          20px
+        );
+
+      font-weight: 700;
+
+      opacity: .8;
+    }
+
+
+    /* ======================================================
+       ПАНЕЛЬ
+    ====================================================== */
+
+    .panel {
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding:
+        clamp(
+          20px,
+          4vw,
+          38px
+        );
+
+      background:
+        rgba(255,255,255,.67);
+
+      border:
+        1px solid
+        rgba(255,255,255,.88);
+
+      border-radius: 30px;
+
+      box-shadow:
+        var(--shadow);
+
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+    }
+
+
+    /* ======================================================
+       DRAG
+    ====================================================== */
+
+    .drag-card {
+      min-width: 94px;
+
+      padding:
+        14px 24px;
+
+      border-radius: 18px;
+
+      background: #fff;
+
+      border:
+        2px solid
+        rgba(122,160,149,.24);
+
+      box-shadow:
+        0 8px 18px
+        rgba(23,61,67,.09);
+
+      color: var(--text);
+
+      font-size: 27px;
+      font-weight: 900;
+
+      text-align: center;
+
+      cursor: grab;
+
+      user-select: none;
+      touch-action: none;
+
+      transition:
+        transform .18s ease,
+        opacity .18s ease,
+        box-shadow .18s ease;
+    }
+
+
+    .drag-card:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 12px 22px
+        rgba(23,61,67,.13);
+    }
+
+
+    .drag-card.dragging-source {
+      opacity: .32;
+    }
+
+
+    .drag-ghost {
+      position: fixed;
+
+      left: 0;
+      top: 0;
+
+      z-index: 99999;
+
+      pointer-events: none;
+
+      transform:
+        translate(-50%, -50%)
+        scale(1.06);
+
+      box-shadow:
+        0 20px 40px
+        rgba(23,61,67,.22);
+
+      transition: none !important;
+    }
+
+
+    .bounce {
+      animation:
+        bounceBack
+        .42s ease;
+    }
+
+
+    @keyframes bounceBack {
+      0% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-10px);
+      }
+
+      50% {
+        transform: translateX(10px);
+      }
+
+      75% {
+        transform: translateX(-5px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+
+    .success-pop {
+      animation:
+        successPop
+        .4s ease;
+    }
+
+
+    @keyframes successPop {
+      0% {
+        transform: scale(.88);
+      }
+
+      60% {
+        transform: scale(1.09);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+
+    /* ======================================================
+       ЗАДАНИЕ 1
+    ====================================================== */
+
+    .be-bank {
+      display: flex;
+
+      justify-content: center;
+
+      flex-wrap: wrap;
+
+      gap: 14px;
+
+      margin-bottom: 34px;
+    }
+
+
+    .be-bank .drag-card {
+      background:
+        linear-gradient(
+          145deg,
+          #fff,
+          #EFFFFA
+        );
+
+      font-size: 30px;
+    }
+
+
+    .pronoun-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(220px,1fr)
+        );
+
+      gap: 14px;
+
+      max-width: 720px;
+
+      margin: 0 auto;
+    }
+
+
+    .pronoun-row {
+      min-height: 78px;
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 120px;
+
+      align-items: center;
+
+      gap: 12px;
+
+      padding:
+        12px 14px
+        12px 20px;
+
+      background:
+        rgba(255,255,255,.84);
+
+      border-radius: 20px;
+    }
+
+
+    .pronoun {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+
+    .drop-zone {
+      min-height: 52px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 0 8px;
+
+      border:
+        2px dashed
+        rgba(122,160,149,.55);
+
+      border-radius: 15px;
+
+      color: var(--green);
+
+      font-size: 25px;
+      font-weight: 900;
+
+      transition: .18s ease;
+    }
+
+
+    .drop-zone.drag-over {
+      background: var(--mint);
+
+      transform: scale(1.03);
+    }
+
+
+    .drop-zone.filled {
+      background: var(--mint);
+
+      border-style: solid;
+
+      border-color:
+        rgba(70,169,139,.35);
+    }
+
+
+    /* ======================================================
+       КНОПКИ
+    ====================================================== */
+
+    .controls {
+      display: flex;
+
+      justify-content: center;
+
+      flex-wrap: wrap;
+
+      gap: 12px;
+
+      margin-top: 25px;
+    }
+
+
+    .main-btn,
+    .secondary-btn {
+      padding:
+        14px 28px;
+
+      border: 0;
+      border-radius: 18px;
+
+      font-size: 18px;
+      font-weight: 900;
+
+      cursor: pointer;
+
+      transition: .18s ease;
+    }
+
+
+    .main-btn {
+      background: var(--text);
+
+      color: #fff;
+
+      box-shadow:
+        0 10px 20px
+        rgba(23,61,67,.16);
+    }
+
+
+    .main-btn:hover {
+      transform: translateY(-2px);
+    }
+
+
+    .main-btn:disabled {
+      opacity: .34;
+
+      cursor: default;
+
+      transform: none;
+
+      box-shadow: none;
+    }
+
+
+    .secondary-btn {
+      background:
+        rgba(255,255,255,.86);
+
+      color: var(--text);
+
+      border:
+        1px solid
+        rgba(23,61,67,.10);
+    }
+
+
+    /* ======================================================
+       КАРТОЧКИ ЗАДАНИЙ 2 И 3
+    ====================================================== */
+
+    .exercise-card {
+      max-width: 930px;
+
+      margin: 0 auto;
+
+      padding:
+        clamp(
+          20px,
+          4vw,
+          34px
+        );
+
+      background:
+        rgba(255,255,255,.80);
+
+      border:
+        1px solid
+        rgba(255,255,255,.92);
+
+      border-radius: 28px;
+
+      box-shadow: var(--shadow);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+
+    .activity-layout {
+      display: grid;
+
+      grid-template-columns:
+        minmax(220px,320px)
+        1fr;
+
+      gap: 28px;
+
+      align-items: center;
+    }
+
+
+    /* ======================================================
+       КАРТИНКИ
+    ====================================================== */
+
+    .picture-box {
+      width: 100%;
+
+      padding:
+        12px 12px 14px;
+
+      background: #fff;
+
+      border:
+        1px solid
+        rgba(23,61,67,.07);
+
+      border-radius: 24px;
+    }
+
+
+    .picture-box img {
+      display: block;
+
+      width: 100%;
+
+      aspect-ratio: 1 / 1;
+
+      object-fit: contain;
+
+      background: #fff;
+
+      border-radius: 17px;
+    }
+
+
+    .picture-caption {
+      padding-top: 9px;
+
+      text-align: center;
+
+      color: var(--text);
+
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+
+    .exercise-number {
+      display: inline-flex;
+
+      margin-bottom: 14px;
+
+      padding:
+        7px 13px;
+
+      background: var(--mint);
+
+      border-radius: 999px;
+
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+
+    /* ======================================================
+       ПРЕДЛОЖЕНИЕ
+    ====================================================== */
+
+    .sentence {
+      margin-bottom: 20px;
+
+      font-size:
+        clamp(
+          25px,
+          3vw,
+          34px
+        );
+
+      line-height: 1.45;
+
+      font-weight: 900;
+    }
+
+
+    .inline-blank {
+      display: inline-flex;
+
+      min-width: 84px;
+      min-height: 48px;
+
+      margin:
+        0 4px;
+
+      padding:
+        0 8px;
+
+      vertical-align: middle;
+
+      align-items: center;
+      justify-content: center;
+
+      border-bottom:
+        4px solid
+        var(--mint-dark);
+
+      color: var(--green);
+    }
+
+
+    .inline-blank.drag-over {
+      background: var(--mint);
+
+      border-radius:
+        10px 10px 0 0;
+    }
+
+
+    .small-be-bank {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+
+      margin:
+        18px 0 24px;
+    }
+
+
+    .small-be-bank .drag-card {
+      min-width: 76px;
+
+      padding:
+        10px 19px;
+
+      font-size: 22px;
+    }
+
+
+    /* ======================================================
+       ПЕРЕВОД
+    ====================================================== */
+
+    .translation-title {
+      margin:
+        20px 0 10px;
+
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+
+    .translations {
+      display: grid;
+
+      gap: 10px;
+    }
+
+
+    .translation-btn {
+      width: 100%;
+
+      padding:
+        14px 17px;
+
+      text-align: left;
+
+      background: #F7FAF9;
+
+      color: var(--text);
+
+      border:
+        2px solid
+        transparent;
+
+      border-radius: 16px;
+
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+
+      cursor: pointer;
+
+      transition:
+        opacity .32s ease,
+        transform .2s ease,
+        max-height .32s ease,
+        padding .32s ease,
+        margin .32s ease;
+    }
+
+
+    .translation-btn:hover:not(:disabled) {
+      border-color:
+        rgba(122,160,149,.30);
+    }
+
+
+    .translation-btn.wrong-flash {
+      background: #FFF4F4;
+
+      border-color:
+        rgba(226,83,83,.45);
+    }
+
+
+    .translation-btn.correct-choice {
+      background: #EFFCF7;
+
+      border-color:
+        rgba(70,169,139,.32);
+    }
+
+
+    .translation-btn.disappear {
+      opacity: 0;
+
+      max-height: 0;
+
+      margin: 0;
+
+      padding-top: 0;
+      padding-bottom: 0;
+
+      overflow: hidden;
+
+      border-width: 0;
+
+      transform: scale(.94);
+    }
+
+
+    /*
+       СЛОВО "СЕЙЧАС"
+
+       Пробелы остаются нормальными.
+       Дополнительно есть небольшой margin.
+    */
+
+    .now-word {
+      display: inline-block;
+
+      margin:
+        0 4px;
+
+      color: var(--red);
+
+      font-weight: 900;
+
+      animation:
+        nowPop
+        .65s ease
+        forwards;
+    }
+
+
+    @keyframes nowPop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.32);
+      }
+
+      100% {
+        transform: scale(1.10);
+      }
+    }
+
+
+    .feedback {
+      min-height: 30px;
+
+      margin-top: 13px;
+
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+
+    .feedback.error {
+      color: var(--red);
+    }
+
+
+    .feedback.ok {
+      color: var(--green);
+    }
+
+
+    /* ======================================================
+       ЗАДАНИЕ 3
+    ====================================================== */
+
+    .word-bank,
+    .answer-zone {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+
+      min-height: 78px;
+
+      padding: 14px;
+
+      border-radius: 19px;
+    }
+
+
+    .word-bank {
+      margin-top: 12px;
+
+      background: #F7FAF9;
+
+      border:
+        2px solid
+        rgba(23,61,67,.06);
+    }
+
+
+    .answer-zone {
+      margin-top: 17px;
+
+      background: #fff;
+
+      border:
+        2px dashed
+        rgba(122,160,149,.48);
+
+      align-content: flex-start;
+    }
+
+
+    .answer-zone.drag-over {
+      background: var(--mint);
+    }
+
+
+    .word-chip {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      min-height: 46px;
+
+      padding:
+        10px 15px;
+
+      background: #fff;
+
+      color: var(--text);
+
+      border:
+        2px solid
+        rgba(122,160,149,.24);
+
+      border-radius: 14px;
+
+      box-shadow:
+        0 5px 12px
+        rgba(23,61,67,.07);
+
+      font-size: 20px;
+      font-weight: 900;
+
+      cursor: grab;
+
+      user-select: none;
+      touch-action: none;
+    }
+
+
+    .answer-zone .word-chip {
+      background: var(--mint);
+    }
+
+
+    .word-chip.used {
+      display: none;
+    }
+
+
+    .answer-zone.correct {
+      background: #F1FCF8;
+
+      border-color: var(--green);
+
+      animation:
+        successPop
+        .4s ease;
+    }
+
+
+    .answer-zone.incorrect {
+      border-color: var(--red);
+
+      animation:
+        bounceBack
+        .4s ease;
+    }
+
+
+    /* ======================================================
+       ФИНИШ
+    ====================================================== */
+
+    .finish {
+      max-width: 700px;
+
+      margin:
+        60px auto;
+
+      padding:
+        50px 25px;
+
+      text-align: center;
+
+      background:
+        rgba(255,255,255,.80);
+
+      border-radius: 30px;
+
+      box-shadow: var(--shadow);
+    }
+
+
+    .finish-emoji {
+      margin-bottom: 8px;
+
+      font-size: 70px;
+    }
+
+
+    .finish h2 {
+      margin:
+        8px 0;
+
+      font-size:
+        clamp(
+          34px,
+          6vw,
+          52px
+        );
+    }
+
+
+    .finish p {
+      font-size: 20px;
+      font-weight: 800;
+
+      opacity: .76;
+    }
+
+
+    /* ======================================================
+       ЛОГО
+    ====================================================== */
+
+    .logo {
+      position: fixed;
+
+      right: 22px;
+      bottom: 16px;
+
+      z-index: 20;
+
+      width: 88px;
+
+      max-width: 18vw;
+
+      pointer-events: none;
+    }
+
+
+    /* ======================================================
+       MOBILE
+    ====================================================== */
+
+    @media (max-width: 720px) {
+
+      .app {
+        width:
+          calc(100% - 18px);
+
+        padding-top: 10px;
+      }
+
+
+      .trainer-tabs {
+        grid-template-columns: 1fr;
+
+        gap: 5px;
+
+        margin-bottom: 17px;
+
+        border-radius: 19px;
+      }
+
+
+      .trainer-tab {
+        min-height: 47px;
+
+        text-align: left;
+
+        font-size: 15px;
+      }
+
+
+      .panel {
+        padding:
+          18px 14px;
+
+        border-radius: 24px;
+      }
+
+
+      .pronoun-grid {
+        grid-template-columns: 1fr;
+      }
+
+
+      .pronoun-row {
+        min-height: 70px;
+
+        grid-template-columns:
+          1fr 105px;
+      }
+
+
+      .activity-layout {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+      }
+
+
+      .picture-box {
+        width:
+          min(
+            260px,
+            80%
+          );
+
+        margin:
+          0 auto;
+      }
+
+
+      .sentence {
+        text-align: center;
+      }
+
+
+      .small-be-bank {
+        justify-content: center;
+      }
+
+
+      .drag-card {
+        min-width: 82px;
+      }
+
+
+      .translation-btn {
+        font-size: 16px;
+      }
+
+
+      .logo {
+        right: 12px;
+        bottom: 10px;
+
+        width: 64px;
+      }
+
+    }
+
+
+
+/* ======================================================
+   FIX — DAY OFF
+====================================================== */
+
+/* Слово "сейчас" */
+.translation-btn .now-word,
+.translation-btn:disabled .now-word,
+.now-word {
+  display: inline-block !important;
+  color: #e25353 !important;
+  font-weight: 900 !important;
+  margin: 0 5px !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #e25353 !important;
+}
+
+
+/* ЛОГО — крупнее */
+.trainer-logo {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 18px !important;
+
+  width: 135px !important;
+  height: auto !important;
+  max-width: none !important;
+
+  z-index: 20 !important;
+
+  opacity: 1 !important;
+  pointer-events: none;
+}
+
+
+/* СРЕДНИЙ КРУГ
+   опускаем вниз — теперь он пересекается с большим */
+.space-decor-medium {
+  width: 105px !important;
+  height: 105px !important;
+
+  left: 42px !important;
+  bottom: 20px !important;
+}
+
+
+/* МАЛЕНЬКИЙ КРУГ
+   тоже накладываем на большой */
+.space-decor-small {
+  width: 70px !important;
+  height: 70px !important;
+
+  left: 175px !important;
+  bottom: 10px !important;
+}
+
+
+/* Планшет / телефон */
+@media (max-width: 700px) {
+
+  .trainer-logo {
+    width: 95px !important;
+    right: 12px !important;
+    bottom: 10px !important;
+  }
+
+  .space-decor-medium {
+    width: 76px !important;
+    height: 76px !important;
+
+    left: 28px !important;
+    bottom: 15px !important;
+  }
+
+  .space-decor-small {
+    width: 52px !important;
+    height: 52px !important;
+
+    left: 125px !important;
+    bottom: 7px !important;
+  }
+}
+  </style>
+</head>
+
+
+<body>
+
+<!-- КРУГИ ИЗ THE SPACE THEME -->
+<div class="space-decor space-decor-medium"></div>
+<div class="space-decor space-decor-small"></div>
+
+
+<div class="app">
+
+
+  <!-- ====================================================
+       ВКЛАДКИ
+  ===================================================== -->
+
+  <nav class="trainer-tabs">
+
+    <button
+      class="trainer-tab active"
+      data-page="1"
+    >
+      <span class="tab-number">1</span>
+      am, is, are
+    </button>
+
+
+    <button
+      class="trainer-tab"
+      data-page="2"
+    >
+      <span class="tab-number">2</span>
+      Переведите предложения
+    </button>
+
+
+    <button
+      class="trainer-tab"
+      data-page="3"
+    >
+      <span class="tab-number">3</span>
+      Расставьте слова
+    </button>
+
+  </nav>
+
+
+  <div
+    class="counter"
+    id="topCounter"
+  ></div>
+
+
+  <!-- ====================================================
+       СТРАНИЦА 1
+  ===================================================== -->
+
+  <section
+    class="screen active"
+    id="screen1"
+  >
+
+    <h1>
+      Формы глагола be
+    </h1>
+
+
+    <p class="instruction">
+      Перетащи
+      <b>am, is, are</b>
+      к подходящим местоимениям
+    </p>
+
+
+    <div class="panel">
+
+
+      <div
+        class="be-bank"
+        id="page1Bank"
+      >
+
+        <div
+          class="drag-card be-source"
+          data-value="am"
+        >
+          am
+        </div>
+
+
+        <div
+          class="drag-card be-source"
+          data-value="is"
+        >
+          is
+        </div>
+
+
+        <div
+          class="drag-card be-source"
+          data-value="are"
+        >
+          are
+        </div>
+
+      </div>
+
+
+      <div class="pronoun-grid">
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">I</div>
+
+          <div
+            class="drop-zone"
+            data-answer="am"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">you</div>
+
+          <div
+            class="drop-zone"
+            data-answer="are"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">he</div>
+
+          <div
+            class="drop-zone"
+            data-answer="is"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">she</div>
+
+          <div
+            class="drop-zone"
+            data-answer="is"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">it</div>
+
+          <div
+            class="drop-zone"
+            data-answer="is"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">we</div>
+
+          <div
+            class="drop-zone"
+            data-answer="are"
+          ></div>
+        </div>
+
+
+        <div class="pronoun-row">
+          <div class="pronoun">they</div>
+
+          <div
+            class="drop-zone"
+            data-answer="are"
+          ></div>
+        </div>
+
+
+      </div>
+
+
+      <div class="controls">
+
+        <button
+          class="main-btn"
+          id="page1Next"
+          disabled
+        >
+          Дальше →
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ====================================================
+       СТРАНИЦА 2
+  ===================================================== -->
+
+  <section
+    class="screen"
+    id="screen2"
+  >
+
+    <h1>
+      Present Continuous
+    </h1>
+
+
+    <p class="instruction">
+      Вставь глагол
+      <b>am, is, are</b>
+      и подбери перевод
+    </p>
+
+
+    <div id="page2Container"></div>
+
+  </section>
+
+
+  <!-- ====================================================
+       СТРАНИЦА 3
+  ===================================================== -->
+
+  <section
+    class="screen"
+    id="screen3"
+  >
+
+    <h1>
+      Собери предложение
+    </h1>
+
+
+    <p class="instruction">
+      Поставь слова в правильном порядке
+    </p>
+
+
+    <div id="page3Container"></div>
+
+  </section>
+
+
+  <!-- ====================================================
+       ФИНИШ
+  ===================================================== -->
+
+  <section
+    class="screen"
+    id="finishScreen"
+  >
+
+    <div class="finish">
+
+      <div class="finish-emoji">
+        ⭐
+      </div>
+
+      <h2>
+        Молодец!
+      </h2>
+
+      <p>
+        Ты прошёл весь тренажёр.
+      </p>
+
+      <button
+        class="main-btn"
+        onclick="restartTrainer()"
+      >
+        Пройти ещё раз
+      </button>
+
+    </div>
+
+  </section>
+
+
+</div>
+
+
+<!-- ЛОГО БЕРЁМ ИЗ ГЛАВНОЙ ПЛАТФОРМЫ -->
+<img
+  src="https://thespace-english.github.io/The-Space-Trainer/logo.png"
+  class="trainer-logo"
+  alt="The Space"
+>
+
+
+<script>
+
+/* ==========================================================
+   ДАННЫЕ
+========================================================== */
+
+const activities = [
+
+  {
+    subject: "He",
+    be: "is",
+
+    words: [
+      "He",
+      "is",
+      "driving",
+      "a",
+      "car."
+    ],
+
+    action: "drive a car",
+
+    image: "drive a car.png",
+
+    translations: [
+      "Он умеет водить машину",
+      "Он сейчас ведёт машину"
+    ],
+
+    correctTranslation: 1
+  },
+
+
+  {
+    subject: "She",
+    be: "is",
+
+    words: [
+      "She",
+      "is",
+      "playing",
+      "the",
+      "piano."
+    ],
+
+    action: "play the piano",
+
+    image: "play the piano.png",
+
+    translations: [
+      "Она сейчас играет на пианино",
+      "Она каждый день играет на пианино"
+    ],
+
+    correctTranslation: 0
+  },
+
+
+  {
+    subject: "We",
+    be: "are",
+
+    words: [
+      "We",
+      "are",
+      "watching",
+      "TV."
+    ],
+
+    action: "watch TV",
+
+    image: "watch TV.png",
+
+    translations: [
+      "Мы смотрим телевизор сейчас",
+      "Мы любим смотреть телевизор"
+    ],
+
+    correctTranslation: 0
+  },
+
+
+  {
+    subject: "I",
+    be: "am",
+
+    words: [
+      "I",
+      "am",
+      "painting",
+      "a",
+      "picture."
+    ],
+
+    action: "paint a picture",
+
+    image: "paint a picture.png",
+
+    translations: [
+      "Я могу нарисовать картинку",
+      "Я сейчас рисую картинку"
+    ],
+
+    correctTranslation: 1
+  },
+
+
+  {
+    subject: "They",
+    be: "are",
+
+    words: [
+      "They",
+      "are",
+      "making",
+      "a",
+      "sandcastle."
+    ],
+
+    action: "make a sandcastle",
+
+    image: "make a sandcastle.png",
+
+    translations: [
+      "Они часто строят песочный замок",
+      "Они сейчас строят песочный замок"
+    ],
+
+    correctTranslation: 1
+  },
+
+
+  {
+    subject: "He",
+    be: "is",
+
+    words: [
+      "He",
+      "is",
+      "climbing",
+      "a",
+      "tree."
+    ],
+
+    action: "climb a tree",
+
+    image: "climb a tree.png",
+
+    translations: [
+      "Он сейчас лезет на дерево",
+      "Он лазает по деревьям"
+    ],
+
+    correctTranslation: 0
+  },
+
+
+  {
+    subject: "They",
+    be: "are",
+
+    words: [
+      "They",
+      "are",
+      "taking",
+      "photos."
+    ],
+
+    action: "take photos",
+
+    image: "take photos.png",
+
+    translations: [
+      "Они всегда фотографируют",
+      "Они сейчас фотографируют"
+    ],
+
+    correctTranslation: 1
+  },
+
+
+  {
+    subject: "She",
+    be: "is",
+
+    words: [
+      "She",
+      "is",
+      "sleeping."
+    ],
+
+    action: "sleep",
+
+    image: "sleep.png",
+
+    translations: [
+      "Она хочет спать",
+      "Она сейчас спит"
+    ],
+
+    correctTranslation: 1
+  },
+
+
+  {
+    subject: "I",
+    be: "am",
+
+    words: [
+      "I",
+      "am",
+      "riding",
+      "a",
+      "bike."
+    ],
+
+    action: "ride a bike",
+
+    image: "ride a bike.png",
+
+    translations: [
+      "Я сейчас еду на велосипеде",
+      "Я умею ездить на велосипеде"
+    ],
+
+    correctTranslation: 0
+  },
+
+
+  {
+    subject: "We",
+    be: "are",
+
+    words: [
+      "We",
+      "are",
+      "eating",
+      "ice-cream."
+    ],
+
+    action: "eat an ice cream",
+
+    image: "eat an ice cream.png",
+
+    translations: [
+      "Мы едим много мороженого",
+      "Мы сейчас едим мороженое"
+    ],
+
+    correctTranslation: 1
+  }
+
+];
+
+
+/* ==========================================================
+   ПЕРЕМЕШИВАНИЕ
+========================================================== */
+
+function shuffle(array) {
+
+  const copy = [...array];
+
+  for (
+    let i = copy.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
+
+    [
+      copy[i],
+      copy[j]
+    ] = [
+      copy[j],
+      copy[i]
+    ];
+
+  }
+
+  return copy;
+}
+
+
+/* ==========================================================
+   ЭКРАНЫ
+========================================================== */
+
+function showScreen(number) {
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(screen => {
+      screen.classList.remove("active");
+    });
+
+
+  const id =
+    number === "finish"
+      ? "finishScreen"
+      : "screen" + number;
+
+
+  const target =
+    document.getElementById(id);
+
+
+  if (target) {
+    target.classList.add("active");
+  }
+
+
+  document
+    .querySelectorAll(".trainer-tab")
+    .forEach(tab => {
+
+      tab.classList.toggle(
+        "active",
+        Number(tab.dataset.page) === Number(number)
+      );
+
+    });
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+/* ==========================================================
+   DRAG
+========================================================== */
+
+function bounce(element) {
+
+  element.classList.remove("bounce");
+
+  void element.offsetWidth;
+
+  element.classList.add("bounce");
+}
+
+
+function makeDraggable(
+  element,
+  dropSelector,
+  onDrop
+) {
+
+  element.addEventListener(
+    "pointerdown",
+    startDrag
+  );
+
+
+  function startDrag(e) {
+
+    if (
+      e.pointerType === "mouse"
+      &&
+      e.button !== 0
+    ) {
+      return;
+    }
+
+
+    e.preventDefault();
+
+
+    const ghost =
+      element.cloneNode(true);
+
+
+    ghost.classList.add(
+      "drag-ghost"
+    );
+
+
+    document.body.appendChild(
+      ghost
+    );
+
+
+    element.classList.add(
+      "dragging-source"
+    );
+
+
+    moveGhost(
+      ghost,
+      e.clientX,
+      e.clientY
+    );
+
+
+    function move(e) {
+
+      e.preventDefault();
+
+
+      moveGhost(
+        ghost,
+        e.clientX,
+        e.clientY
+      );
+
+
+      clearDragOver();
+
+
+      const below =
+        document.elementFromPoint(
+          e.clientX,
+          e.clientY
+        );
+
+
+      const zone =
+        below
+          ? below.closest(dropSelector)
+          : null;
+
+
+      if (zone) {
+        zone.classList.add(
+          "drag-over"
+        );
+      }
+
+    }
+
+
+    function end(e) {
+
+      window.removeEventListener(
+        "pointermove",
+        move
+      );
+
+
+      clearDragOver();
+
+
+      const below =
+        document.elementFromPoint(
+          e.clientX,
+          e.clientY
+        );
+
+
+      const zone =
+        below
+          ? below.closest(dropSelector)
+          : null;
+
+
+      ghost.remove();
+
+
+      element.classList.remove(
+        "dragging-source"
+      );
+
+
+      const success =
+        zone
+          ? onDrop(element, zone)
+          : false;
+
+
+      if (!success) {
+        bounce(element);
+      }
+
+    }
+
+
+    window.addEventListener(
+      "pointermove",
+      move,
+      { passive: false }
+    );
+
+
+    window.addEventListener(
+      "pointerup",
+      end,
+      { once: true }
+    );
+
+  }
+
+}
+
+
+function moveGhost(
+  ghost,
+  x,
+  y
+) {
+
+  ghost.style.left =
+    x + "px";
+
+  ghost.style.top =
+    y + "px";
+}
+
+
+function clearDragOver() {
+
+  document
+    .querySelectorAll(
+      ".drag-over"
+    )
+    .forEach(el => {
+
+      el.classList.remove(
+        "drag-over"
+      );
+
+    });
+
+}
+
+
+/* ==========================================================
+   ЗАДАНИЕ 1
+========================================================== */
+
+let page1Correct = 0;
+
+
+document
+  .querySelectorAll(
+    "#page1Bank .be-source"
+  )
+  .forEach(card => {
+
+    makeDraggable(
+      card,
+      "#screen1 .drop-zone",
+
+      function(source, zone) {
+
+        if (
+          zone.classList.contains(
+            "filled"
+          )
+        ) {
+          return false;
+        }
+
+
+        const value =
+          source.dataset.value;
+
+
+        const answer =
+          zone.dataset.answer;
+
+
+        if (value !== answer) {
+          return false;
+        }
+
+
+        zone.textContent =
+          value;
+
+
+        zone.classList.add(
+          "filled",
+          "success-pop"
+        );
+
+
+        page1Correct++;
+
+
+        if (page1Correct === 7) {
+
+          document
+            .getElementById(
+              "page1Next"
+            )
+            .disabled = false;
+
+        }
+
+
+        return true;
+
+      }
+
+    );
+
+  });
+
+
+document
+  .getElementById(
+    "page1Next"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      openPage2();
+
+    }
+  );
+
+
+/* ==========================================================
+   ЗАДАНИЕ 2
+========================================================== */
+
+let page2Order = [];
+
+let page2Index = 0;
+
+
+function startPage2() {
+
+  page2Order =
+    shuffle(activities);
+
+  page2Index = 0;
+
+  renderPage2();
+}
+
+
+function openPage2() {
+
+  showScreen(2);
+
+  if (
+    page2Order.length === 0
+  ) {
+
+    startPage2();
+
+  } else {
+
+    renderPage2();
+
+  }
+
+}
+
+
+function renderPage2() {
+
+  const container =
+    document.getElementById(
+      "page2Container"
+    );
+
+
+  if (
+    page2Index >=
+    page2Order.length
+  ) {
+
+    openPage3();
+
+    return;
+  }
+
+
+  const item =
+    page2Order[
+      page2Index
+    ];
+
+
+  document
+    .getElementById(
+      "topCounter"
+    )
+    .textContent =
+    `${page2Index + 1} / 10`;
+
+
+  container.innerHTML = `
+
+    <div class="exercise-card">
+
+      <div class="activity-layout">
+
+
+        <div class="picture-box">
+
+          <img
+            src="${item.image}"
+            alt="${item.action}"
+          >
+
+          <div class="picture-caption">
+            ${item.action}
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <div class="exercise-number">
+            ${page2Index + 1} из 10
+          </div>
+
+
+          <div class="sentence">
+
+            ${item.subject}
+
+            <span
+              class="inline-blank"
+              id="beBlank"
+            ></span>
+
+            ${getIngPart(item)}
+
+          </div>
+
+
+          <div
+            class="small-be-bank"
+            id="page2BeBank"
+          >
+
+            <div
+              class="drag-card page2-be"
+              data-value="am"
+            >
+              am
+            </div>
+
+            <div
+              class="drag-card page2-be"
+              data-value="is"
+            >
+              is
+            </div>
+
+            <div
+              class="drag-card page2-be"
+              data-value="are"
+            >
+              are
+            </div>
+
+          </div>
+
+
+          <div
+            id="translationArea"
+            style="
+              opacity:.35;
+              pointer-events:none;
+              transition:.3s ease;
+            "
+          >
+
+            <div class="translation-title">
+              Выбери правильный перевод:
+            </div>
+
+
+            <div class="translations">
+
+              ${item.translations.map(
+                (translation,index) => `
+
+                <button
+                  class="translation-btn"
+                  data-index="${index}"
+                >
+                  ${translation}
+                </button>
+
+                `
+              ).join("")}
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="feedback"
+            id="page2Feedback"
+          ></div>
+
+
+          <div class="controls">
+
+            <button
+              class="main-btn"
+              id="page2Next"
+              disabled
+            >
+              Дальше →
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  setupPage2Drag(item);
+
+  setupTranslations(item);
+
+}
+
+
+function getIngPart(item) {
+
+  return item.words
+    .slice(2)
+    .join(" ");
+}
+
+
+function setupPage2Drag(item) {
+
+  document
+    .querySelectorAll(
+      ".page2-be"
+    )
+    .forEach(card => {
+
+      makeDraggable(
+        card,
+        "#beBlank",
+
+        function(source, zone) {
+
+          if (
+            zone.classList.contains(
+              "done"
+            )
+          ) {
+            return false;
+          }
+
+
+          const selected =
+            source.dataset.value;
+
+
+          if (
+            selected !== item.be
+          ) {
+            return false;
+          }
+
+
+          zone.textContent =
+            selected;
+
+
+          zone.classList.add(
+            "done",
+            "success-pop"
+          );
+
+
+          document
+            .querySelectorAll(
+              "#page2BeBank .drag-card"
+            )
+            .forEach(el => {
+
+              el.style.pointerEvents =
+                "none";
+
+
+              el.style.opacity =
+                el === source
+                  ? ".48"
+                  : ".22";
+
+            });
+
+
+          const area =
+            document.getElementById(
+              "translationArea"
+            );
+
+
+          area.style.opacity =
+            "1";
+
+
+          area.style.pointerEvents =
+            "auto";
+
+
+          return true;
+
+        }
+
+      );
+
+    });
+
+}
+
+
+function setupTranslations(item) {
+
+  document
+    .querySelectorAll(
+      ".translation-btn"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const chosen =
+            Number(
+              button.dataset.index
+            );
+
+
+          const feedback =
+            document.getElementById(
+              "page2Feedback"
+            );
+
+
+          if (
+            chosen !==
+            item.correctTranslation
+          ) {
+
+            feedback.textContent =
+              "Попробуй ещё раз.";
+
+
+            feedback.className =
+              "feedback error";
+
+
+            button.classList.add(
+              "wrong-flash"
+            );
+
+
+            setTimeout(
+              () => {
+
+                button.classList.remove(
+                  "wrong-flash"
+                );
+
+              },
+              450
+            );
+
+
+            return;
+          }
+
+
+          feedback.textContent =
+            "Верно!";
+
+
+          feedback.className =
+            "feedback ok";
+
+
+          document
+            .querySelectorAll(
+              ".translation-btn"
+            )
+            .forEach(
+              (btn,index) => {
+
+                btn.disabled = true;
+
+
+                if (
+                  index ===
+                  item.correctTranslation
+                ) {
+
+                  btn.classList.add(
+                    "correct-choice"
+                  );
+
+
+                  btn.innerHTML =
+                    highlightNow(
+                      item.translations[
+                        index
+                      ]
+                    );
+
+                } else {
+
+                  btn.classList.add(
+                    "disappear"
+                  );
+
+                }
+
+              }
+            );
+
+
+          document
+            .getElementById(
+              "page2Next"
+            )
+            .disabled = false;
+
+        }
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      "page2Next"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        page2Index++;
+
+        renderPage2();
+
+      }
+    );
+
+}
+
+
+/*
+   Не вставляем пробелы внутрь HTML вручную.
+   CSS margin даёт нормальное расстояние
+   между словом "сейчас" и соседними словами.
+*/
+
+function highlightNow(text) {
+
+  return text.replace(
+    /сейчас/gi,
+    match =>
+      `<span class="now-word">${match}</span>`
+  );
+
+}
+
+
+/* ==========================================================
+   ЗАДАНИЕ 3
+========================================================== */
+
+let page3Order = [];
+
+let page3Index = 0;
+
+
+function startPage3() {
+
+  page3Order =
+    shuffle(activities);
+
+  page3Index = 0;
+
+  renderPage3();
+}
+
+
+function openPage3() {
+
+  showScreen(3);
+
+
+  if (
+    page3Order.length === 0
+  ) {
+
+    startPage3();
+
+  } else {
+
+    renderPage3();
+
+  }
+
+}
+
+
+function renderPage3() {
+
+  const container =
+    document.getElementById(
+      "page3Container"
+    );
+
+
+  if (
+    page3Index >=
+    page3Order.length
+  ) {
+
+    document
+      .getElementById(
+        "topCounter"
+      )
+      .textContent = "";
+
+
+    showScreen("finish");
+
+    return;
+  }
+
+
+  const item =
+    page3Order[
+      page3Index
+    ];
+
+
+  const shuffledWords =
+    shuffle(
+      item.words.map(
+        (word,index) => ({
+          word,
+          index
+        })
+      )
+    );
+
+
+  document
+    .getElementById(
+      "topCounter"
+    )
+    .textContent =
+    `${page3Index + 1} / 10`;
+
+
+  container.innerHTML = `
+
+    <div class="exercise-card">
+
+      <div class="activity-layout">
+
+
+        <div class="picture-box">
+
+          <img
+            src="${item.image}"
+            alt="${item.action}"
+          >
+
+          <div class="picture-caption">
+            ${item.action}
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <div class="exercise-number">
+            ${page3Index + 1} из 10
+          </div>
+
+
+          <div
+            style="
+              font-size:19px;
+              font-weight:900;
+              margin-bottom:8px;
+            "
+          >
+            Поставь слова в правильном порядке:
+          </div>
+
+
+          <div
+            class="word-bank"
+            id="wordBank"
+          >
+
+            ${shuffledWords.map(
+              (entry,id) => `
+
+              <div
+                class="word-chip"
+                data-id="${id}"
+                data-word="${escapeHtml(entry.word)}"
+              >
+                ${entry.word}
+              </div>
+
+              `
+            ).join("")}
+
+          </div>
+
+
+          <div
+            class="answer-zone"
+            id="answerZone"
+          ></div>
+
+
+          <div
+            class="feedback"
+            id="page3Feedback"
+          ></div>
+
+
+          <div class="controls">
+
+            <button
+              class="secondary-btn"
+              id="clearSentence"
+            >
+              ↶ Сначала
+            </button>
+
+
+            <button
+              class="main-btn"
+              id="checkSentence"
+            >
+              Проверить
+            </button>
+
+
+            <button
+              class="main-btn"
+              id="page3Next"
+              disabled
+              style="display:none;"
+            >
+              Дальше →
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  setupWordBuilder(item);
+
+}
+
+
+function setupWordBuilder(item) {
+
+  const bank =
+    document.getElementById(
+      "wordBank"
+    );
+
+
+  bank
+    .querySelectorAll(
+      ".word-chip"
+    )
+    .forEach(chip => {
+
+
+      /*
+         На планшете можно
+         просто нажимать на слова.
+      */
+
+      chip.addEventListener(
+        "click",
+        () => {
+
+          if (
+            chip.classList.contains(
+              "used"
+            )
+          ) {
+            return;
+          }
+
+
+          addWordToAnswer(chip);
+
+        }
+      );
+
+
+      makeDraggable(
+        chip,
+        "#answerZone",
+
+        function(source) {
+
+          if (
+            source.classList.contains(
+              "used"
+            )
+          ) {
+            return false;
+          }
+
+
+          addWordToAnswer(source);
+
+          return true;
+
+        }
+
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      "clearSentence"
+    )
+    .addEventListener(
+      "click",
+      clearAnswer
+    );
+
+
+  document
+    .getElementById(
+      "checkSentence"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        checkSentence(item);
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      "page3Next"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        page3Index++;
+
+        renderPage3();
+
+      }
+    );
+
+}
+
+
+function addWordToAnswer(source) {
+
+  const zone =
+    document.getElementById(
+      "answerZone"
+    );
+
+
+  const placed =
+    document.createElement(
+      "div"
+    );
+
+
+  placed.className =
+    "word-chip";
+
+
+  placed.textContent =
+    source.dataset.word;
+
+
+  placed.dataset.sourceId =
+    source.dataset.id;
+
+
+  placed.addEventListener(
+    "click",
+    () => {
+
+      const original =
+        document.querySelector(
+          `.word-bank .word-chip[data-id="${placed.dataset.sourceId}"]`
+        );
+
+
+      if (original) {
+        original.classList.remove(
+          "used"
+        );
+      }
+
+
+      placed.remove();
+
+      resetAnswerFeedback();
+
+    }
+  );
+
+
+  zone.appendChild(placed);
+
+
+  source.classList.add(
+    "used"
+  );
+
+
+  resetAnswerFeedback();
+
+}
+
+
+function clearAnswer() {
+
+  document
+    .querySelectorAll(
+      "#wordBank .word-chip"
+    )
+    .forEach(chip => {
+
+      chip.classList.remove(
+        "used"
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      "answerZone"
+    )
+    .innerHTML = "";
+
+
+  resetAnswerFeedback();
+
+}
+
+
+function resetAnswerFeedback() {
+
+  const zone =
+    document.getElementById(
+      "answerZone"
+    );
+
+
+  zone.classList.remove(
+    "correct",
+    "incorrect"
+  );
+
+
+  const feedback =
+    document.getElementById(
+      "page3Feedback"
+    );
+
+
+  feedback.textContent = "";
+
+  feedback.className =
+    "feedback";
+
+}
+
+
+function checkSentence(item) {
+
+  const zone =
+    document.getElementById(
+      "answerZone"
+    );
+
+
+  const selectedWords =
+    [...zone.querySelectorAll(
+      ".word-chip"
+    )]
+    .map(
+      el =>
+        el.textContent.trim()
+    );
+
+
+  const correct =
+    item.words;
+
+
+  const isCorrect =
+    selectedWords.length ===
+      correct.length
+    &&
+    selectedWords.every(
+      (word,index) =>
+        word === correct[index]
+    );
+
+
+  const feedback =
+    document.getElementById(
+      "page3Feedback"
+    );
+
+
+  zone.classList.remove(
+    "correct",
+    "incorrect"
+  );
+
+
+  void zone.offsetWidth;
+
+
+  if (!isCorrect) {
+
+    zone.classList.add(
+      "incorrect"
+    );
+
+
+    feedback.textContent =
+      "Попробуй ещё раз.";
+
+
+    feedback.className =
+      "feedback error";
+
+
+    return;
+  }
+
+
+  zone.classList.add(
+    "correct"
+  );
+
+
+  feedback.textContent =
+    "Верно!";
+
+
+  feedback.className =
+    "feedback ok";
+
+
+  zone
+    .querySelectorAll(
+      ".word-chip"
+    )
+    .forEach(chip => {
+
+      chip.style.pointerEvents =
+        "none";
+
+    });
+
+
+  document
+    .getElementById(
+      "checkSentence"
+    )
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById(
+      "clearSentence"
+    )
+    .style.display =
+    "none";
+
+
+  const next =
+    document.getElementById(
+      "page3Next"
+    );
+
+
+  next.style.display =
+    "inline-block";
+
+
+  next.disabled =
+    false;
+
+}
+
+
+/* ==========================================================
+   ВКЛАДКИ
+========================================================== */
+
+document
+  .querySelectorAll(
+    ".trainer-tab"
+  )
+  .forEach(tab => {
+
+    tab.addEventListener(
+      "click",
+      () => {
+
+        const page =
+          Number(
+            tab.dataset.page
+          );
+
+
+        if (page === 1) {
+
+          document
+            .getElementById(
+              "topCounter"
+            )
+            .textContent = "";
+
+
+          showScreen(1);
+
+        }
+
+
+        if (page === 2) {
+          openPage2();
+        }
+
+
+        if (page === 3) {
+          openPage3();
+        }
+
+      }
+    );
+
+  });
+
+
+/* ==========================================================
+   ESCAPE
+========================================================== */
+
+function escapeHtml(text) {
+
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* ==========================================================
+   ЗАНОВО
+========================================================== */
+
+function restartTrainer() {
+
+  page1Correct = 0;
+
+
+  document
+    .querySelectorAll(
+      "#screen1 .drop-zone"
+    )
+    .forEach(zone => {
+
+      zone.textContent = "";
+
+
+      zone.classList.remove(
+        "filled",
+        "success-pop"
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      "page1Next"
+    )
+    .disabled = true;
+
+
+  page2Order = [];
+  page3Order = [];
+
+
+  page2Index = 0;
+  page3Index = 0;
+
+
+  document
+    .getElementById(
+      "page2Container"
+    )
+    .innerHTML = "";
+
+
+  document
+    .getElementById(
+      "page3Container"
+    )
+    .innerHTML = "";
+
+
+  document
+    .getElementById(
+      "topCounter"
+    )
+    .textContent = "";
+
+
+  showScreen(1);
+
+}
+
+</script>
+
+</body>
+</html>
