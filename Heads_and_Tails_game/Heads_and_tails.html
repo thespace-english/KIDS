@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>The Space — Coin Flip</title>
+
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: "Nunito", sans-serif;
+      color: #173D43;
+
+      background:
+        radial-gradient(
+          circle at 10% 82%,
+          rgba(123, 224, 210, 0.33) 0%,
+          rgba(123, 224, 210, 0.15) 22%,
+          transparent 43%
+        ),
+        radial-gradient(
+          circle at 86% 22%,
+          rgba(178, 166, 255, 0.23) 0%,
+          rgba(178, 166, 255, 0.10) 24%,
+          transparent 46%
+        ),
+        linear-gradient(
+          135deg,
+          #f8fffd 0%,
+          #eafbf7 42%,
+          #f2efff 100%
+        );
+    }
+
+    /* ==============================
+       ВЕРХНЯЯ СТЕКЛЯННАЯ ДУГА
+       НЕ МЕНЯЕМ
+    ============================== */
+
+    .top-arc {
+      position: fixed;
+      top: -295px;
+      right: -185px;
+
+      width: 720px;
+      height: 520px;
+
+      border-radius: 50%;
+
+      border: 34px solid rgba(255, 255, 255, 0.20);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.18),
+          rgba(255, 255, 255, 0.04)
+        );
+
+      box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.28),
+        inset 0 -10px 24px rgba(119, 178, 169, 0.07),
+        0 18px 55px rgba(92, 139, 132, 0.05);
+
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .top-arc::before {
+      content: "";
+      position: absolute;
+
+      inset: 12px;
+
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.34);
+    }
+
+    /* ==============================
+       НИЖНИЕ ТРИ КРУГА THE SPACE
+    ============================== */
+
+    .circle-large {
+      position: fixed;
+
+      left: -118px;
+      bottom: -178px;
+
+      width: 390px;
+      height: 390px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(68, 176, 160, 0.22),
+          rgba(80, 193, 177, 0.14)
+        );
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.25);
+
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .circle-medium {
+      position: fixed;
+
+      left: 228px;
+      bottom: 48px;
+
+      width: 118px;
+      height: 118px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(83, 192, 177, 0.23),
+          rgba(83, 192, 177, 0.13)
+        );
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.28);
+
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /*
+       Маленький круг:
+       - немного увеличен
+       - остаётся меньше среднего
+       - пересекает большой
+       - НЕ пересекает средний
+    */
+
+    .circle-small {
+      position: fixed;
+
+      left: 184px;
+      bottom: 177px;
+
+      width: 68px;
+      height: 68px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(80, 188, 173, 0.30),
+          rgba(80, 188, 173, 0.17)
+        );
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.30);
+
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ==============================
+       ОСНОВНАЯ СЦЕНА
+    ============================== */
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      z-index: 1;
+    }
+
+    .coin-zone {
+      position: absolute;
+      inset: 0;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding-bottom: 45px;
+    }
+
+    /* ==============================
+       3D МОНЕТКА
+    ============================== */
+
+    .coin-scene {
+      width: min(390px, 62vw);
+      aspect-ratio: 1;
+      perspective: 1300px;
+    }
+
+    .coin {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+
+      will-change: transform;
+    }
+
+    .coin.spinning {
+      transition:
+        transform 4s
+        cubic-bezier(.16, .78, .22, 1);
+    }
+
+    .coin-face {
+      position: absolute;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      border-radius: 50%;
+
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      filter:
+        drop-shadow(0 20px 18px rgba(68, 91, 87, 0.18))
+        drop-shadow(0 5px 5px rgba(0, 0, 0, 0.10));
+    }
+
+    .coin-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+
+      display: block;
+
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .front {
+      transform: rotateY(0deg) translateZ(6px);
+    }
+
+    .back {
+      transform: rotateY(180deg) translateZ(6px);
+    }
+
+    .coin::before {
+      content: "";
+
+      position: absolute;
+      inset: 2.2%;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #d98d00 0%,
+          #ffcd37 30%,
+          #fff28a 50%,
+          #ffbd18 70%,
+          #c87500 100%
+        );
+
+      transform: translateZ(0);
+    }
+
+    /* ==============================
+       СЧЁТЧИК
+    ============================== */
+
+    .score-panel {
+      position: absolute;
+
+      top: 50%;
+      right: 7vw;
+
+      transform: translateY(-50%);
+
+      width: 200px;
+      padding: 22px 23px;
+
+      border: 1px solid rgba(255,255,255,0.68);
+      border-radius: 25px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,0.56),
+          rgba(255,255,255,0.34)
+        );
+
+      box-shadow:
+        0 14px 45px rgba(68, 112, 104, 0.08),
+        inset 0 1px 0 rgba(255,255,255,0.85);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .score-title {
+      margin-bottom: 17px;
+
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+
+      color: #72968f;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 10px 0;
+
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .score-row + .score-row {
+      border-top: 1px solid rgba(23, 61, 67, 0.08);
+    }
+
+    .score-number {
+      min-width: 44px;
+      text-align: right;
+
+      font-size: 28px;
+      font-weight: 900;
+
+      color: #168d83;
+    }
+
+    /* ==============================
+       START
+    ============================== */
+
+    .controls {
+      position: absolute;
+
+      left: 50%;
+      bottom: 38px;
+
+      transform: translateX(-50%);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .start-btn {
+      min-width: 180px;
+      height: 60px;
+
+      padding: 0 42px;
+
+      border: 0;
+      border-radius: 999px;
+
+      font-family: "Nunito", sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+
+      color: #ffffff;
+
+      background:
+        linear-gradient(
+          135deg,
+          #68cfc2 0%,
+          #32988f 100%
+        );
+
+      box-shadow:
+        0 12px 28px rgba(49, 143, 135, 0.23),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+
+      cursor: pointer;
+
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 16px 34px rgba(49, 143, 135, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .start-btn:active {
+      transform: translateY(1px) scale(.98);
+    }
+
+    .start-btn:disabled {
+      cursor: default;
+      opacity: 0.58;
+      transform: none;
+    }
+
+    /* ==============================
+       ТЕЛЕФОН
+    ============================== */
+
+    @media (max-width: 850px) {
+
+      .top-arc {
+        top: -220px;
+        right: -220px;
+
+        width: 540px;
+        height: 390px;
+
+        border-width: 27px;
+      }
+
+      .circle-large {
+        left: -120px;
+        bottom: -200px;
+
+        width: 340px;
+        height: 340px;
+      }
+
+      .circle-medium {
+        left: 184px;
+        bottom: 50px;
+
+        width: 92px;
+        height: 92px;
+      }
+
+      .circle-small {
+        left: 143px;
+        bottom: 137px;
+
+        width: 54px;
+        height: 54px;
+      }
+
+      .coin-zone {
+        align-items: flex-start;
+
+        padding-top: 78px;
+        padding-bottom: 0;
+      }
+
+      .coin-scene {
+        width: min(335px, 72vw);
+      }
+
+      .score-panel {
+        top: auto;
+        right: 50%;
+        bottom: 108px;
+
+        transform: translateX(50%);
+
+        width: min(310px, 82vw);
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        column-gap: 24px;
+
+        padding: 14px 22px;
+      }
+
+      .score-title {
+        display: none;
+      }
+
+      .score-row {
+        padding: 5px 0;
+      }
+
+      .score-row + .score-row {
+        border-top: none;
+      }
+
+      .controls {
+        bottom: 28px;
+      }
+
+      .start-btn {
+        height: 56px;
+        min-width: 170px;
+      }
+    }
+
+    @media (max-height: 650px) and (min-width: 851px) {
+
+      .coin-scene {
+        width: min(310px, 48vh);
+      }
+
+      .controls {
+        bottom: 22px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="top-arc"></div>
+
+  <div class="circle-large"></div>
+  <div class="circle-medium"></div>
+  <div class="circle-small"></div>
+
+  <main class="app">
+
+    <div class="coin-zone">
+
+      <div class="coin-scene">
+
+        <div class="coin" id="coin">
+
+          <div class="coin-face front">
+            <img
+              src="монетка_лицо.png"
+              alt="Heads"
+              draggable="false"
+            >
+          </div>
+
+          <div class="coin-face back">
+            <img
+              src="монетка_оборот.png"
+              alt="Tails"
+              draggable="false"
+            >
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <aside class="score-panel">
+
+      <div class="score-title">
+        Results
+      </div>
+
+      <div class="score-row">
+        <span>Heads</span>
+        <span class="score-number" id="headsCount">0</span>
+      </div>
+
+      <div class="score-row">
+        <span>Tails</span>
+        <span class="score-number" id="tailsCount">0</span>
+      </div>
+
+    </aside>
+
+    <div class="controls">
+
+      <button
+        class="start-btn"
+        id="startButton"
+        type="button"
+      >
+        START
+      </button>
+
+    </div>
+
+  </main>
+
+  <script>
+
+    const coin = document.getElementById("coin");
+    const startButton = document.getElementById("startButton");
+
+    const headsCounter = document.getElementById("headsCount");
+    const tailsCounter = document.getElementById("tailsCount");
+
+    let heads = 0;
+    let tails = 0;
+
+    let currentAngle = 0;
+    let spinning = false;
+
+    startButton.addEventListener("click", flipCoin);
+
+    function flipCoin() {
+
+      if (spinning) return;
+
+      spinning = true;
+      startButton.disabled = true;
+
+      const isHeads = Math.random() < 0.5;
+
+      const targetFace = isHeads ? 0 : 180;
+
+      const currentMod =
+        ((currentAngle % 360) + 360) % 360;
+
+      const correction =
+        (targetFace - currentMod + 360) % 360;
+
+      const fullTurns = 7 * 360;
+
+      currentAngle += fullTurns + correction;
+
+      coin.classList.add("spinning");
+
+      requestAnimationFrame(() => {
+
+        coin.style.transform =
+          `rotateY(${currentAngle}deg)`;
+
+      });
+
+      setTimeout(() => {
+
+        if (isHeads) {
+
+          heads++;
+          headsCounter.textContent = heads;
+
+        } else {
+
+          tails++;
+          tailsCounter.textContent = tails;
+
+        }
+
+        spinning = false;
+        startButton.disabled = false;
+
+        coin.classList.remove("spinning");
+
+      }, 4000);
+
+    }
+
+  </script>
+
+</body>
+</html>
